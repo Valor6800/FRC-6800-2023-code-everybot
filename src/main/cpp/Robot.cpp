@@ -15,7 +15,7 @@ class Robot : public frc::TimedRobot {
   frc::PWMSparkMax m_rightMotor{1};
   frc::DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor}; //Tank Style Drive
   frc::XboxController controller;
-  frc::Timer m_timer;
+  //frc::Timer m_timer;
 
   static constexpr double kSensitivity = 0.5; //senditivity of joystics
 
@@ -36,6 +36,7 @@ class Robot : public frc::TimedRobot {
 
     //Use ArcadeDrive to eliminate usage of multiple if/else statements
     m_robotDrive.ArcadeDrive(speed, rotation);
+
   }
 };
 
