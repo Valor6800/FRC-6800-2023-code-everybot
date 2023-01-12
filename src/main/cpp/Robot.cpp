@@ -13,11 +13,9 @@
 class Robot : public frc::TimedRobot {
   frc::PWMSparkMax m_leftMotor{0};
   frc::PWMSparkMax m_rightMotor{1};
-  frc::DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor}; //Tank Style Drive
-  frc::XboxController controller;
-  //frc::Timer m_timer;
-
-  static constexpr double kSensitivity = 0.5; //senditivity of joystics
+  frc::DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor};
+  frc::XboxController controller{0}; //error was here (I did not use {0})
+  frc::Timer m_timer;
 
  public:
   void RobotInit() override {
@@ -36,7 +34,6 @@ class Robot : public frc::TimedRobot {
 
     //Use ArcadeDrive to eliminate usage of multiple if/else statements
     m_robotDrive.ArcadeDrive(speed, rotation);
-
   }
 };
 
