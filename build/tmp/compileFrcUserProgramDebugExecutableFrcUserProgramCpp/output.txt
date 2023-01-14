@@ -1,0 +1,4 @@
+See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-everybot-Imported/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramDebugExecutableFrcUserProgramCpp.
+compiling Robot.cpp successful.
+
+Finished compileFrcUserProgramDebugExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-everybot-Imported/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt.
