@@ -17,14 +17,14 @@
  */
 class Robot : public frc::TimedRobot {
   //acceleration feature
-  double Acceleration = 0.3;
+  //double Acceleration = 0.3;
   double currentSpeed = 0;
 
   //creating 4 motors as it is in the robot
-  rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_leftMotor2{2, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_rightMotor1{3, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_rightMotor2{4, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_leftMotor2{2, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_rightMotor1{3, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_rightMotor2{4, rev::CANSparkMax::MotorType::kBrushed};
   //create a MotorControllerGroup to combine all left and right motors
   frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
   frc::MotorControllerGroup m_rightMotors{m_rightMotor1, m_rightMotor2};
@@ -51,11 +51,11 @@ class Robot : public frc::TimedRobot {
     double rotation = controller.GetRightX();
 
     //creating current speed by * speed and acceleratiton
-    currentSpeed += speed * Acceleration;
+    //currentSpeed += speed * Acceleration;
 
     //Use ArcadeDrive to eliminate usage of multiple if/else statements
     //also speed * kMaxSpeed to create acceleration for the robot
-    m_robotDrive.ArcadeDrive(currentSpeed, rotation);
+    m_robotDrive.ArcadeDrive(speed, rotation);
 
     //code to check the speed of the robot without acceleration
     //m_robotDrive.ArcadeDrive(speed, rotation);
