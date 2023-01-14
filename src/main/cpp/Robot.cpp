@@ -8,6 +8,9 @@
 #include <frc/Timer.h>
 #include <frc/TimedRobot.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <rev/CANSparkMax.h>
+//find the CANSparkMax
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class.
@@ -20,13 +23,16 @@ class Robot : public frc::TimedRobot {
   double currentSpeed = 0;
 
   //creating 4 motors as it is in the robot
-  frc::PWMSparkMax m_leftMotor1{0};
-  frc::PWMSparkMax m_leftMotor2{1};
-  frc::PWMSparkMax m_rightMotor1{2};
-  frc::PWMSparkMax m_rightMotor2{3};
+  rev::CANSparkMax m_leftMotor1{0, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_leftMotor2{1, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_rightMotor1{2, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_rightMotor2{3, rev::CANSparkMax::MotorType::kBrushless};
   //create a MotorControllerGroup to combine all left and right motors
   frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
   frc::MotorControllerGroup m_rightMotors{m_rightMotor1, m_rightMotor2};
+
+  
+
   //Drive variable that is using motor groups
   frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
   frc::XboxController controller{0}; 
