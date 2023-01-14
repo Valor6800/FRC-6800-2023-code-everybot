@@ -2,3 +2,19 @@ Files placed in this directory will be deployed to the RoboRIO into the
   'deploy' directory in the home folder. Use the 'frc::filesystem::GetDeployDirectory'
   function from the 'frc/Filesystem.h' header to get a proper path relative to the deploy
   directory.
+
+  void AutonomousInit() override {
+    m_timer.Reset();
+    m_timer.Start();
+  }
+
+  void AutonomousPeriodic() override {
+    // Drive for 3 seconds
+    if (m_timer.Get() < 3_s) {
+      // Drive forwards half speed, make sure to turn input squaring off
+      m_robotDrive.ArcadeDrive(0.5, 0.0, false);
+    } else {
+      // Stop robot
+      m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+    }
+  }
