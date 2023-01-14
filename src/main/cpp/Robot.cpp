@@ -2,7 +2,6 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 #include "frc/XboxController.h"
-//#include <frc/XboxController.h>
 #include <frc/TimedRobot.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
@@ -17,6 +16,9 @@
  * Runs the motors with tank steering.
  */
 class Robot : public frc::TimedRobot {
+  //acceleration feature
+  double Acceleration = 0.3;
+  double currentSpeed = 0;
 
   //creating 4 motors as it is in the robot
   rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushless};
@@ -48,9 +50,12 @@ class Robot : public frc::TimedRobot {
     //Right Joystic - X Axis for rotation
     double rotation = controller.GetRightX();
 
+    //creating current speed by * speed and acceleratiton
+    currentSpeed += speed * Acceleration;
+
     //Use ArcadeDrive to eliminate usage of multiple if/else statements
     //also speed * kMaxSpeed to create acceleration for the robot
-    m_robotDrive.ArcadeDrive(speed, rotation);
+    m_robotDrive.ArcadeDrive(currentSpeed, rotation);
 
     //code to check the speed of the robot without acceleration
     //m_robotDrive.ArcadeDrive(speed, rotation);
