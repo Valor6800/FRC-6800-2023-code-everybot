@@ -16,7 +16,7 @@ c++
 -g
 -nostdinc
 -I
-"C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include"
+C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include
 -I
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\e057fa417edcba90bca777aa11c60edb\\transformed\\wpilibNewCommands-cpp-2023.1.1-headers
 -I

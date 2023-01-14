@@ -1,4 +1,4 @@
-See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-everybot-imported/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
+See file:///C:/Users/skyla/Desktop/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
 
-Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-everybot-imported/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.
+Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.

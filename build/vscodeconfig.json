@@ -30,7 +30,7 @@
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\b6eca111f95f5d4815f40df890e9b01b\\transformed\\cscore-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\cf5bdc6b18a276fa43ed6e7d6be8c11a\\transformed\\apriltag-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\dc383ad5f184b05c6495bc58c05aacae\\transformed\\opencv-cpp-4.6.0-4-headers\\",
-      "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\",
+      "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\2792161d65f26315f168c9f600165d88\\transformed\\wpilibNewCommands-cpp-2023.1.1-sources\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\ee940a8e7abdfc966f74df4967d4e724\\transformed\\wpilibc-cpp-2023.1.1-sources\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\248ed7bd730118032eefbbe78a45fc33\\transformed\\ntcore-cpp-2023.1.1-sources\\",
@@ -73,7 +73,7 @@
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\b6eca111f95f5d4815f40df890e9b01b\\transformed\\cscore-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\cf5bdc6b18a276fa43ed6e7d6be8c11a\\transformed\\apriltag-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\dc383ad5f184b05c6495bc58c05aacae\\transformed\\opencv-cpp-4.6.0-4-headers\\",
-      "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+      "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
     ],
     "binaries": [
       {
@@ -82,7 +82,7 @@
           {
             "source": {
               "srcDirs": [
-                "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\cpp\\"
+                "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\cpp\\"
               ],
               "includes": [
                 "**/*.cpp",
@@ -92,7 +92,7 @@
             },
             "exportedHeaders": {
               "srcDirs": [
-                "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+                "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
               ],
               "includes": [],
               "excludes": []
@@ -133,7 +133,7 @@
           "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\b6eca111f95f5d4815f40df890e9b01b\\transformed\\cscore-cpp-2023.1.1-headers\\",
           "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\cf5bdc6b18a276fa43ed6e7d6be8c11a\\transformed\\apriltag-cpp-2023.1.1-headers\\",
           "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\dc383ad5f184b05c6495bc58c05aacae\\transformed\\opencv-cpp-4.6.0-4-headers\\",
-          "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+          "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
         ],
         "sharedLibrary": false,
         "executable": true
@@ -143,7 +143,7 @@
       {
         "source": {
           "srcDirs": [
-            "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\cpp\\"
+            "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\cpp\\"
           ],
           "includes": [
             "**/*.cpp",
@@ -175,7 +175,7 @@
       {
         "source": {
           "srcDirs": [
-            "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+            "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
           ],
           "includes": [],
           "excludes": []
@@ -237,7 +237,7 @@
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\b6eca111f95f5d4815f40df890e9b01b\\transformed\\cscore-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\cf5bdc6b18a276fa43ed6e7d6be8c11a\\transformed\\apriltag-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\dc383ad5f184b05c6495bc58c05aacae\\transformed\\opencv-cpp-4.6.0-4-headers\\",
-      "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\",
+      "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\2792161d65f26315f168c9f600165d88\\transformed\\wpilibNewCommands-cpp-2023.1.1-sources\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\ee940a8e7abdfc966f74df4967d4e724\\transformed\\wpilibc-cpp-2023.1.1-sources\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\248ed7bd730118032eefbbe78a45fc33\\transformed\\ntcore-cpp-2023.1.1-sources\\",
@@ -280,7 +280,7 @@
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\b6eca111f95f5d4815f40df890e9b01b\\transformed\\cscore-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\cf5bdc6b18a276fa43ed6e7d6be8c11a\\transformed\\apriltag-cpp-2023.1.1-headers\\",
       "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\dc383ad5f184b05c6495bc58c05aacae\\transformed\\opencv-cpp-4.6.0-4-headers\\",
-      "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+      "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
     ],
     "binaries": [
       {
@@ -289,7 +289,7 @@
           {
             "source": {
               "srcDirs": [
-                "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\cpp\\"
+                "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\cpp\\"
               ],
               "includes": [
                 "**/*.cpp",
@@ -299,7 +299,7 @@
             },
             "exportedHeaders": {
               "srcDirs": [
-                "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+                "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
               ],
               "includes": [],
               "excludes": []
@@ -339,7 +339,7 @@
           "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\b6eca111f95f5d4815f40df890e9b01b\\transformed\\cscore-cpp-2023.1.1-headers\\",
           "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\cf5bdc6b18a276fa43ed6e7d6be8c11a\\transformed\\apriltag-cpp-2023.1.1-headers\\",
           "C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\dc383ad5f184b05c6495bc58c05aacae\\transformed\\opencv-cpp-4.6.0-4-headers\\",
-          "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+          "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
         ],
         "sharedLibrary": false,
         "executable": true
@@ -349,7 +349,7 @@
       {
         "source": {
           "srcDirs": [
-            "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\cpp\\"
+            "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\cpp\\"
           ],
           "includes": [
             "**/*.cpp",
@@ -380,7 +380,7 @@
       {
         "source": {
           "srcDirs": [
-            "C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-everybot-imported\\src\\main\\include\\"
+            "C:\\Users\\skyla\\Desktop\\FRC-6800-2023-code-everybot\\src\\main\\include\\"
           ],
           "includes": [],
           "excludes": []
