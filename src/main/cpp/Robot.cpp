@@ -5,24 +5,36 @@
 #include <frc/TimedRobot.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
+#include <frc/Timer.h>
+#include <frc/TimedRobot.h>
+#include <frc/motorcontrol/MotorControllerGroup.h>
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class.
  * Runs the motors with tank steering.
  */
 class Robot : public frc::TimedRobot {
-  frc::PWMSparkMax m_leftMotor{0};
-  frc::PWMSparkMax m_rightMotor{1};
-  frc::DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor};
-  frc::XboxController controller{0}; //error was here (I did not use {0})
-  frc::Timer m_timer;
+  //acceleration variable
+  const double kAcceleration = 0.01;
+  //current speed
+  double currentSpeed = 0;
+
+  //creating 4 motors as it is in the robot
+  frc::PWMSparkMax m_leftMotor1{0};
+  frc::PWMSparkMax m_leftMotor2{1};
+  frc::PWMSparkMax m_rightMotor1{2};
+  frc::PWMSparkMax m_rightMotor2{3};
+  //create a MotorControllerGroup to combine all left and right motors
+  frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
+  frc::MotorControllerGroup m_rightMotors{m_rightMotor1, m_rightMotor2};
+  //Drive variable that is using motor groups
+  frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
+  frc::XboxController controller{0}; 
 
  public:
   void RobotInit() override {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-    m_rightMotor.SetInverted(true);
+    //right motor must be inverted for it to go forward
+    m_rightMotors.SetInverted(true);
   }
 
   void TeleopPeriodic() override {
@@ -32,8 +44,15 @@ class Robot : public frc::TimedRobot {
     //Right Joystic - X Axis for rotation
     double rotation = controller.GetRightX();
 
+    //calculates current speed with acceleration
+    currentSpeed += speed * kAcceleration;
+
     //Use ArcadeDrive to eliminate usage of multiple if/else statements
-    m_robotDrive.ArcadeDrive(speed, rotation);
+    //also speed * kMaxSpeed to create acceleration for the robot
+    m_robotDrive.ArcadeDrive(currentSpeed, rotation);
+
+    //code to check the speed of the robot without acceleration
+    //m_robotDrive.ArcadeDrive(speed, rotation);
   }
 };
 
