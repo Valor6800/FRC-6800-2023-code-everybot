@@ -31,7 +31,7 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax m_rightMotor2{4, rev::CANSparkMax::MotorType::kBrushed};
 
   //2 motors for the intake
-  rev::CANSparkMax m_leftIntake{10, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_leftIntake{12, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_rightIntake{5, rev::CANSparkMax::MotorType::kBrushless};
 
   //create a MotorControllerGroup to combine all left and right motors
@@ -43,7 +43,7 @@ class Robot : public frc::TimedRobot {
   frc::XboxController controller{0}; 
 
   //AUTO
-  frc::Timer timer;
+  frc::Timer m_timer;
   bool move_forward;
   //frc::Notifier notifier();
 
@@ -54,6 +54,9 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.RestoreFactoryDefaults();
     m_rightMotor1.RestoreFactoryDefaults();
     m_rightMotor2.RestoreFactoryDefaults();
+
+    m_leftIntake.RestoreFactoryDefaults();
+    m_rightIntake.RestoreFactoryDefaults();
 
     //m_rightIntake.RestoreFactoryDefaults();
     //right motor must be inverted for it to go forward
@@ -76,44 +79,77 @@ class Robot : public frc::TimedRobot {
     m_robotDrive.ArcadeDrive(speed, rotation);
 
     //get number from smartDashboard (if not picked, it will be 0.5)
-    int intakenum = frc::SmartDashboard::GetNumber("Intake Speed", 0.5);
+    //int intakenum = frc::SmartDashboard::GetNumber("Intake Speed", 0.5);
     //initial speed of the intake
-    int intakeSpeed = 0;
+    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.5);
 
     //check for left and right trigger
     if (controller.GetLeftTriggerAxis() > 0) {
-        intakeSpeed = intakenum;
+        m_leftIntake.Set(-intakeSpeed);
+        m_rightIntake.Set(intakeSpeed);
     }
     else if (controller.GetRightTriggerAxis() > 0) {
-        intakeSpeed = -intakenum;
+        m_leftIntake.Set(intakeSpeed);
+        m_rightIntake.Set(-intakeSpeed);
     }
-    //set inverted motor speed to 2nd motor
-    m_leftIntake.Set(intakeSpeed);
-    m_rightIntake.Set(-intakeSpeed);
+    else {
+
+        m_leftIntake.Set(0);
+        m_rightIntake.Set(0);
+    }
+    
   }
 
     //*************************************************AUTONOMUS PART*************************************************************
-  void autonomousInit() {
-    move_forward = false;
-    timer.Reset();
-    timer.Start();
+  void AutonomousInit() override {
+    m_timer.Reset();
+    m_timer.Start();
   }
   
 
-  void autonomousPeriodic() {
-    std::string selectedOption = frc::SmartDashboard::GetString("Auto Modes", "Forward_3sec");
-    if (selectedOption == "Forward_3sec") {
-        move_forward = true;
-        if (units::unit_cast<double>(timer.Get()) < 3.0) {
-            //Drive forward for 3 seconds at 25% of the motor capacity
-            m_robotDrive.ArcadeDrive(0.25, 0);
-        } else {
-            m_robotDrive.ArcadeDrive(0, 0);
-        }
-    } else {
-        move_forward = false;
+  void AutonomousPeriodic() override {
+    std::string selectedOption = frc::SmartDashboard::GetString("Auto Modes", "NONE");
+
+    if (selectedOption == "Forward_3sec") { //WORK ON IT!!!
+      // Drive for 2 seconds
+      if (m_timer.Get() < 3_s) {
+        // Drive forwards 25% speed, make sure to turn input squaring off
+        m_robotDrive.ArcadeDrive(0.25, 0.0, false);
+      } else {
+        // Stop robot
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+    }
+    else{
+    m_robotDrive.ArcadeDrive(0.0, 0.0, false);
     }
   }
+  // void autonomousPeriodic() {
+  //   double startTime = units::unit_cast<double>(frc::Timer::GetFPGATimestamp());
+  //   double currentTime;
+  //   while(units::unit_cast<double>(m_timer.Get()) < 3.0){
+      
+  //     std::string selectedOption = frc::SmartDashboard::GetString("Auto Modes", "Forward_3sec");
+
+  //     if (selectedOption == "Forward_3sec") {
+  //         move_forward = true;
+
+  //         if (units::unit_cast<double>(m_timer.Get()) < 3.0) {
+
+  //             //Drive forward for 3 seconds at 25% of the motor capacity
+  //             m_robotDrive.ArcadeDrive(0.25, 0);
+
+  //         } else {
+
+  //             m_robotDrive.ArcadeDrive(0, 0);
+  //         }
+  //     } else {
+
+  //         move_forward = false;
+  //         m_robotDrive.Feed();
+  //     }
+  //   }
+  // }
   //**************************************************************************************************************************
 };
 
