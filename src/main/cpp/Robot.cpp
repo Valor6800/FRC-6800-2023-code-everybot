@@ -11,12 +11,16 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/CANSparkMax.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/RobotState.h>
 #define WPILIB_NO_UNITS
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
    const std::string kAutoDefault = "NONE";
-   const std::string kAutoFowrard3 = "Forward_3sec";
+   const std::string kAutoFowrard1 = "Forward_3sec";
+   const std::string kAutoFowrard2 = "Forward_with_turn";
+   const std::string kAutoFowrard3 = "Turn_and_go";
+   const std::string kAutoFowrard4 = "Basic_Start";
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class.
@@ -45,6 +49,7 @@ class Robot : public frc::TimedRobot {
   //AUTO
   frc::Timer m_timer;
   bool move_forward;
+  
   //frc::Notifier notifier();
 
  public:
@@ -64,11 +69,14 @@ class Robot : public frc::TimedRobot {
     
     //give auto options (Now only 2)
     m_chooser.SetDefaultOption(kAutoDefault, kAutoDefault);
+    m_chooser.AddOption(kAutoFowrard1, kAutoFowrard1);
+    m_chooser.AddOption(kAutoFowrard2, kAutoFowrard2);
     m_chooser.AddOption(kAutoFowrard3, kAutoFowrard3);
+    m_chooser.AddOption(kAutoFowrard4, kAutoFowrard4);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
-    frc::SmartDashboard::PutNumber("Intake Speed", 0); //check if it will give me an option to change a number
+    frc::SmartDashboard::PutNumber("Intake Speed", 0.4); //check if it will give me an option to change a number
   }
 
   void TeleopPeriodic() override {
@@ -81,7 +89,7 @@ class Robot : public frc::TimedRobot {
     //get number from smartDashboard (if not picked, it will be 0.5)
     //int intakenum = frc::SmartDashboard::GetNumber("Intake Speed", 0.5);
     //initial speed of the intake
-    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.5);
+    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
 
     //check for left and right trigger
     if (controller.GetLeftTriggerAxis() > 0) {
@@ -102,54 +110,34 @@ class Robot : public frc::TimedRobot {
 
     //*************************************************AUTONOMUS PART*************************************************************
   void AutonomousInit() override {
+    //m_robotState = frc::RobotState::Autonomous; //develop even further
     m_timer.Reset();
     m_timer.Start();
   }
   
 
   void AutonomousPeriodic() override {
+    //NOTE ON AUTO: it cant go 15% of motor capacity and lower
     std::string selectedOption = frc::SmartDashboard::GetString("Auto Modes", "NONE");
 
-    if (selectedOption == "Forward_3sec") { //WORK ON IT!!!
-      // Drive for 2 seconds
-      if (m_timer.Get() < 3_s) {
-        // Drive forwards 25% speed, make sure to turn input squaring off
-        m_robotDrive.ArcadeDrive(0.25, 0.0, false);
-      } else {
-        // Stop robot
+     //if (selectedOption == "Forward_3sec") {
+      if(m_timer.Get() < 3_s){
+        m_robotDrive.ArcadeDrive(0.5, 0.0, false); 
+      }
+      else if(m_timer.Get() < 5_s){
+        m_robotDrive.ArcadeDrive(0.2, 0.0, false); 
+      }
+      else if(m_timer.Get() < 7_s){
+        m_robotDrive.TankDrive(0.50, 0.0, false);
+      }
+      else if (m_timer.Get() < 9_s){
+        m_robotDrive.ArcadeDrive(0.2, 0.0, false);
+      }
+      else if (m_timer.Get() < 14.5_s){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+        //m_robotDrive = frc::RobotState::IsTeleop();  
       }
     }
-    else{
-    m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-    }
-  }
-  // void autonomousPeriodic() {
-  //   double startTime = units::unit_cast<double>(frc::Timer::GetFPGATimestamp());
-  //   double currentTime;
-  //   while(units::unit_cast<double>(m_timer.Get()) < 3.0){
-      
-  //     std::string selectedOption = frc::SmartDashboard::GetString("Auto Modes", "Forward_3sec");
-
-  //     if (selectedOption == "Forward_3sec") {
-  //         move_forward = true;
-
-  //         if (units::unit_cast<double>(m_timer.Get()) < 3.0) {
-
-  //             //Drive forward for 3 seconds at 25% of the motor capacity
-  //             m_robotDrive.ArcadeDrive(0.25, 0);
-
-  //         } else {
-
-  //             m_robotDrive.ArcadeDrive(0, 0);
-  //         }
-  //     } else {
-
-  //         move_forward = false;
-  //         m_robotDrive.Feed();
-  //     }
-  //   }
-  // }
   //**************************************************************************************************************************
 };
 
