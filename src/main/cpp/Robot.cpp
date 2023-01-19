@@ -47,8 +47,6 @@ class Robot : public frc::TimedRobot {
 
   //AUTO
   frc::Timer m_timer;
-  
-  //frc::Notifier notifier();
 
  public:
   void RobotInit() override {
@@ -61,7 +59,6 @@ class Robot : public frc::TimedRobot {
     m_leftIntake.RestoreFactoryDefaults();
     m_rightIntake.RestoreFactoryDefaults();
 
-    //m_rightIntake.RestoreFactoryDefaults();
     //right motor must be inverted for it to go forward
     m_rightMotors.SetInverted(true);
     
@@ -73,32 +70,33 @@ class Robot : public frc::TimedRobot {
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
-    frc::SmartDashboard::PutNumber("Intake Speed", 0.4); //check if it will give me an option to change a number
+    frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
   }
 
   void TeleopPeriodic() override {
     //spped + rotatation
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
+
     //Arcade drive method
     m_robotDrive.ArcadeDrive(speed, rotation);
 
-    //get number from smartDashboard (if not picked, it will be 0.5)
-    //int intakenum = frc::SmartDashboard::GetNumber("Intake Speed", 0.5);
     //initial speed of the intake
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
 
     //check for left and right trigger
     if (controller.GetLeftTriggerAxis() > 0) {
+        //intake in
         m_leftIntake.Set(-intakeSpeed);
         m_rightIntake.Set(intakeSpeed);
     }
     else if (controller.GetRightTriggerAxis() > 0) {
+        //intake out
         m_leftIntake.Set(intakeSpeed);
         m_rightIntake.Set(-intakeSpeed);
     }
     else {
-
+        //otherwise set them to 0
         m_leftIntake.Set(0);
         m_rightIntake.Set(0);
     }
@@ -132,6 +130,8 @@ class Robot : public frc::TimedRobot {
       }
       else if(m_timer.Get() < 5_s){ 
         m_robotDrive.TankDrive(.7, 0, false); 
+
+        //change is needed to stop intake
         //m_leftIntake.Set(0);
         //m_rightIntake.Set(0);
       }
@@ -158,7 +158,7 @@ class Robot : public frc::TimedRobot {
     }
     else
     {
-      if(m_timer.Get() < 7_s){
+      if(m_timer.Get() < 15_s){
         m_robotDrive.TankDrive(0.0, 0.0, false);
       }
     }
