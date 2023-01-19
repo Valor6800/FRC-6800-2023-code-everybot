@@ -16,11 +16,10 @@
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
-   const std::string kAutoDefault = "NONE";
-   const std::string kAutoFowrard1 = "Forward_3sec";
-   const std::string kAutoFowrard2 = "Forward_with_turn";
-   const std::string kAutoFowrard3 = "Turn_and_go";
-   const std::string kAutoFowrard4 = "Basic_Start";
+   std::string kAutoDefault = "NONE";
+   std::string kAutoFowrard1 = "Red_Mid";
+   std::string kAutoFowrard2 = "Red_Right";
+   std::string kAutoFowrard3 = "Red_Left";
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class.
@@ -48,7 +47,6 @@ class Robot : public frc::TimedRobot {
 
   //AUTO
   frc::Timer m_timer;
-  bool move_forward;
   
   //frc::Notifier notifier();
 
@@ -68,11 +66,10 @@ class Robot : public frc::TimedRobot {
     m_rightMotors.SetInverted(true);
     
     //give auto options (Now only 2)
-    m_chooser.SetDefaultOption(kAutoDefault, kAutoDefault);
-    m_chooser.AddOption(kAutoFowrard1, kAutoFowrard1);
-    m_chooser.AddOption(kAutoFowrard2, kAutoFowrard2);
-    m_chooser.AddOption(kAutoFowrard3, kAutoFowrard3);
-    m_chooser.AddOption(kAutoFowrard4, kAutoFowrard4);
+    m_chooser.SetDefaultOption("NONE", kAutoDefault);
+    m_chooser.AddOption("Red_Mid", kAutoFowrard1);
+    m_chooser.AddOption("Red_Right", kAutoFowrard2);
+    m_chooser.AddOption("Red_Left", kAutoFowrard3);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
@@ -110,7 +107,7 @@ class Robot : public frc::TimedRobot {
 
     //*************************************************AUTONOMUS PART*************************************************************
   void AutonomousInit() override {
-    //m_robotState = frc::RobotState::Autonomous; //develop even further
+    //timer to control robot for 15 seconds
     m_timer.Reset();
     m_timer.Start();
   }
@@ -118,26 +115,54 @@ class Robot : public frc::TimedRobot {
 
   void AutonomousPeriodic() override {
     //NOTE ON AUTO: it cant go 15% of motor capacity and lower
-    std::string selectedOption = frc::SmartDashboard::GetString("Auto Modes", "NONE");
+    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.8);
+    std::string selectedOption = m_chooser.GetSelected();
 
-     //if (selectedOption == "Forward_3sec") {
-      if(m_timer.Get() < 3_s){
-        m_robotDrive.ArcadeDrive(0.5, 0.0, false); 
+     if (selectedOption == "Red_Left") {
+      //CODE FOR LEFT SIDE OF RED DRIVER
+    }
+    else if(selectedOption == "Red_Mid"){
+      //CODE FOR MID SIDE OF RED DRIVER
+    }
+    else if(selectedOption == "Red_Right"){
+      if(m_timer.Get() < 2.4_s){
+        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+        m_leftIntake.Set(-intakeSpeed);
+        m_rightIntake.Set(intakeSpeed);
       }
-      else if(m_timer.Get() < 5_s){
-        m_robotDrive.ArcadeDrive(0.2, 0.0, false); 
+      else if(m_timer.Get() < 5_s){ 
+        m_robotDrive.TankDrive(.7, 0, false); 
+        //m_leftIntake.Set(0);
+        //m_rightIntake.Set(0);
       }
-      else if(m_timer.Get() < 7_s){
-        m_robotDrive.TankDrive(0.50, 0.0, false);
+      else if(m_timer.Get() < 6_s){
+         m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+       }
+       else if(m_timer.Get() < 7_s){
+         m_robotDrive.TankDrive(0, -0.6, false); 
+       }
+       else if(m_timer.Get() < 8_s){
+         m_robotDrive.ArcadeDrive(-0.45, 0.0, false);
+       }
+       else if(m_timer.Get() < 10.5_s){
+         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+         m_leftIntake.Set(-intakeSpeed);
+        m_rightIntake.Set(intakeSpeed);
+       }
+      else if (m_timer.Get() < 12_s){
+        m_robotDrive.TankDrive(0, 0, false); 
+        m_leftIntake.Set(0);
+        m_rightIntake.Set(0);
       }
-      else if (m_timer.Get() < 9_s){
-        m_robotDrive.ArcadeDrive(0.2, 0.0, false);
-      }
-      else if (m_timer.Get() < 14.5_s){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-        //m_robotDrive = frc::RobotState::IsTeleop();  
+
+    }
+    else
+    {
+      if(m_timer.Get() < 7_s){
+        m_robotDrive.TankDrive(0.0, 0.0, false);
       }
     }
+  }
   //**************************************************************************************************************************
 };
 
