@@ -12,6 +12,7 @@
 #include <rev/CANSparkMax.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/RobotState.h>
+#include <units/time.h>
 #define WPILIB_NO_UNITS
 
   //auto options
@@ -47,6 +48,7 @@ class Robot : public frc::TimedRobot {
 
   //AUTO
   frc::Timer m_timer;
+  frc::Timer m_waittimer;
 
  public:
   void RobotInit() override {
@@ -71,6 +73,7 @@ class Robot : public frc::TimedRobot {
 
     //give a 0 as initial number for intake speed
     frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
+    frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
   }
 
   void TeleopPeriodic() override {
@@ -105,13 +108,28 @@ class Robot : public frc::TimedRobot {
 
     //*************************************************AUTONOMUS PART*************************************************************
   void AutonomousInit() override {
-    //timer to control robot for 15 seconds
     m_timer.Reset();
     m_timer.Start();
+    //m_waittimer.Reset();
+    //m_waittimer.Start();
   }
-  
 
   void AutonomousPeriodic() override {
+    bool wait = false;
+    //--------------------------DELAY SYSTEM--------------------------------------
+    // while(!wait){
+    //   int x = frc::SmartDashboard::GetNumber("Delay (Sec)", 0);
+    //   units::unit_t<units::time::second, double, units::linear_scale> seconds(x);
+    //   if(m_waittimer.Get() == seconds){
+    //     wait = true;
+    //   }
+    //   else{
+    //     m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+    //   }
+    // }
+
+    //---------------------------------------------------------------------------
+
     //NOTE ON AUTO: it cant go 15% of motor capacity and lower
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.8);
     std::string selectedOption = m_chooser.GetSelected();
@@ -120,48 +138,124 @@ class Robot : public frc::TimedRobot {
       //CODE FOR LEFT SIDE OF RED DRIVER
     }
     else if(selectedOption == "Red_Mid"){
-      //CODE FOR MID SIDE OF RED DRIVER
+      if(m_timer.Get() < 0.75_s){ //0.48 if nothing else is wokring is perfect to turn right 90 degrees
+         m_robotDrive.TankDrive(-0.7, 0.7, false); 
+       }
+       else if(m_timer.Get() < 2_s){
+          m_robotDrive.ArcadeDrive(-0.55, 0.0, false); 
+       }
+       else if(m_timer.Get() < 2.5_s){
+          m_robotDrive.ArcadeDrive(0, 0.0, false); 
+       }
+       else if(m_timer.Get() < 3.2_s){ 
+         m_robotDrive.TankDrive(0.7, -0.7, false); 
+       }
+       else if(m_timer.Get() < 3.6_s){ 
+        m_robotDrive.ArcadeDrive(0, 0, false);
+         //m_robotDrive.ArcadeDrive(-.9, 0, false);
+       }
+       else if(m_timer.Get() < 4.4_s){ 
+         m_robotDrive.ArcadeDrive(-.9, 0, false);
+       }
+       else if(m_timer.Get() < 5.5_s){ 
+        m_robotDrive.ArcadeDrive(0, 0, false);
+         //m_robotDrive.TankDrive(0.-7, 0.7, false); 
+       }
+       else if(m_timer.Get() < 6.25_s){ 
+         m_robotDrive.TankDrive(-0.7, 0.7, false); 
+       }
+       else if(m_timer.Get() < 15_s){
+       }
     }
     else if(selectedOption == "Red_Right"){
-      if(m_timer.Get() < 2.4_s){
-        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-        m_leftIntake.Set(-intakeSpeed);
-        m_rightIntake.Set(intakeSpeed);
-      }
-      else if(m_timer.Get() < 5_s){ 
-        m_robotDrive.TankDrive(.7, 0, false); 
-
-        //change is needed to stop intake
-        //m_leftIntake.Set(0);
-        //m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 6_s){
+      if(m_timer.Get() < 0.2_s){
          m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
        }
-       else if(m_timer.Get() < 7_s){
-         m_robotDrive.TankDrive(0, -0.6, false); 
+       else if (m_timer.Get() < 0.5_s){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
        }
-       else if(m_timer.Get() < 8_s){
-         m_robotDrive.ArcadeDrive(-0.45, 0.0, false);
+       else if(m_timer.Get() < 1.3_s){
+          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 and 0.79
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
        }
-       else if(m_timer.Get() < 10.5_s){
-         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-         m_leftIntake.Set(-intakeSpeed);
-        m_rightIntake.Set(intakeSpeed);
+       else if(m_timer.Get() < 1.5_s){
+          m_robotDrive.TankDrive(0, 0.0, false);
        }
-      else if (m_timer.Get() < 12_s){
-        m_robotDrive.TankDrive(0, 0, false); 
-        m_leftIntake.Set(0);
-        m_rightIntake.Set(0);
-      }
+       else if(m_timer.Get() < 3_s){
+          m_robotDrive.ArcadeDrive(-0.65, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
+       }
+       else if(m_timer.Get() < 5_s){
+          m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
+       }
+       else if(m_timer.Get() < 6_s){
+          m_robotDrive.TankDrive(-.8, .8, false); 
+       }
+       else if(m_timer.Get() < 6.1_s){
+          m_robotDrive.TankDrive(0, 0, false); 
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0); 
+       }
+       else if(m_timer.Get() < 7.35_s){
+          m_robotDrive.ArcadeDrive(-0.75, 0.0, false); 
+       }
+       else if(m_timer.Get() < 8.1_s){
+          m_robotDrive.ArcadeDrive(0, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
+       }
+       else if(m_timer.Get() < 9.1_s){
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
+       }
+       else if(m_timer.Get() < 15_s){
+          m_robotDrive.TankDrive(0, 0.0, false);
+       }
 
-    }
-    else
-    {
-      if(m_timer.Get() < 15_s){
-        m_robotDrive.TankDrive(0.0, 0.0, false);
-      }
-    }
+
+    //   if(m_timer.Get() < 2.4_s){
+    //     m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+    //     m_leftIntake.Set(-intakeSpeed);
+    //     m_rightIntake.Set(intakeSpeed);
+    //   }
+    //   else if(m_timer.Get() < 5_s){ 
+    //     m_robotDrive.TankDrive(.7, 0, false); 
+
+    //     //change is needed to stop intake
+    //     //m_leftIntake.Set(0);
+    //     //m_rightIntake.Set(0);
+    //   }
+    //   else if(m_timer.Get() < 6_s){
+    //      m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+    //    }
+    //    else if(m_timer.Get() < 7_s){
+    //      m_robotDrive.TankDrive(0, -0.6, false); 
+    //    }
+    //    else if(m_timer.Get() < 8_s){
+    //      m_robotDrive.ArcadeDrive(-0.45, 0.0, false);
+    //    }
+    //    else if(m_timer.Get() < 10.5_s){
+    //      m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+    //      m_leftIntake.Set(-intakeSpeed);
+    //     m_rightIntake.Set(intakeSpeed);
+    //    }
+    //   else if (m_timer.Get() < 12_s){
+    //     m_robotDrive.TankDrive(0, 0, false); 
+    //     m_leftIntake.Set(0);
+    //     m_rightIntake.Set(0);
+    //   }
+
+    // }
+    // else
+    // {
+    //   if(m_timer.Get() < 15_s){
+    //     m_robotDrive.TankDrive(0.0, 0.0, false);
+    //   }
+     }
   }
   //**************************************************************************************************************************
 };

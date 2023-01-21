@@ -1,4 +1,8 @@
 See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::AutonomousPeriodic()':
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:118:10: warning: unused variable 'wait' [-Wunused-variable]
+  118 |     bool wait = false;
+      |          ^~~~
 
 Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.
