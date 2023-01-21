@@ -138,14 +138,36 @@ class Robot : public frc::TimedRobot {
     //---------------------------------------------------------------------------
     //if(wait == false){
     if (selectedOption == "Red_Left") {
-      //CODE FOR LEFT SIDE OF RED DRIVER
+      //ROBOT MUST FACE THE DRIVER
+      if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+      else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees
+        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+      }
+      else if (m_timer.Get() < 0.85_s + secondsX){
+        m_robotDrive.TankDrive(0.7, -0.7, false);
+      }
+      else if (m_timer.Get() < 1.85_s + secondsX){
+        m_robotDrive.ArcadeDrive(-0.5, 0, false);
+      }
+      else if (m_timer.Get() < 2.3_s + secondsX){
+        m_robotDrive.TankDrive(0.72, -0.72, false);
+      }
+      else if (m_timer.Get() < 3.7_s + secondsX){
+        m_robotDrive.ArcadeDrive(-0.3, 0, false);
+      }
+      else if(m_timer.Get() < 15_s + secondsX){
+        m_robotDrive.ArcadeDrive(0, 0, false); 
+      }
     }
     else if(selectedOption == "Red_Mid"){
+      //ROBOT MUST FACE THE FIELD
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
       else if(m_timer.Get() < 0.75_s + secondsX){ //0.48 if nothing else is wokring is perfect to turn right 90 degrees
-        m_robotDrive.TankDrive(-0.7, 0.7, false); 
+        m_robotDrive.TankDrive(-0.55, 0.55, false); 
       }
       else if(m_timer.Get() < 2_s + secondsX){
           m_robotDrive.ArcadeDrive(-0.55, 0.0, false); 
@@ -154,7 +176,7 @@ class Robot : public frc::TimedRobot {
           m_robotDrive.ArcadeDrive(0, 0.0, false); 
       }
       else if(m_timer.Get() < 3.2_s + secondsX){ 
-        m_robotDrive.TankDrive(0.7, -0.7, false); 
+        m_robotDrive.TankDrive(0.65, -0.65, false); 
       }
       else if(m_timer.Get() < 3.6_s + secondsX){ 
         m_robotDrive.ArcadeDrive(0, 0, false);
@@ -163,17 +185,31 @@ class Robot : public frc::TimedRobot {
       else if(m_timer.Get() < 4.4_s + secondsX){ 
         m_robotDrive.ArcadeDrive(-.9, 0, false);
       }
-      else if(m_timer.Get() < 5.5_s + secondsX){ 
+      else if(m_timer.Get() < 5.65_s + secondsX){ 
         m_robotDrive.ArcadeDrive(0, 0, false);
         //m_robotDrive.TankDrive(0.-7, 0.7, false); 
       }
-      else if(m_timer.Get() < 6.25_s + secondsX){ 
-        m_robotDrive.TankDrive(-0.7, 0.7, false); 
+      else if(m_timer.Get() < 6.7_s + secondsX){ 
+        m_robotDrive.TankDrive(-0.6, 0.6, false); 
+      }
+      else if(m_timer.Get() < 7_s + secondsX){ 
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 9_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(-.5, 0, false); 
+      }
+      else if(m_timer.Get() < 10_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 10.75_s + secondsX){ 
+        m_robotDrive.TankDrive(-0.6, 0.6, false); 
       }
       else if(m_timer.Get() < 15_s + secondsX){
+        m_robotDrive.ArcadeDrive(0, 0, false); 
       }
     }
     else if(selectedOption == "Red_Right"){
+      //ROBOT MUST FACE THE DRIVER
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
