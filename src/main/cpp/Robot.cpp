@@ -10,6 +10,12 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/CANSparkMax.h>
+//---
+#include <frc/motorcontrol/Victor.h>
+#include <frc/motorcontrol/PWMVictorSPX.h>
+#include <frc/motorcontrol/PWMTalonSRX.h>
+#include <frc/motorcontrol/Talon.h> //NEW MOTOR-CONTROLLER TYPES
+//---
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/RobotState.h>
 #include <units/time.h>
@@ -29,8 +35,8 @@
 class Robot : public frc::TimedRobot {
 
   //insersted from EVERYBOT EXAMPLE CODE-----------------------------
-  //VictorSPX driveLeftVictor = new VictorSPX(3);
-  //VictorSPX driveRightVictor = new VictorSPX(4);
+  frc::PWMTalonSRX driveLeftTalon{1};
+  frc::PWMVictorSPX driveRightVictor{2}; //check which one exactly + IDs
 
   /**
    * How many amps the arm motor can use.
@@ -92,20 +98,19 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax m_rightMotor2{4, rev::CANSparkMax::MotorType::kBrushed};
 
   //2 motors for the intake
-  rev::CANSparkMax m_leftIntake{12, rev::CANSparkMax::MotorType::kBrushless}; //prob need to change IDs
+  rev::CANSparkMax m_leftIntake{12, rev::CANSparkMax::MotorType::kBrushless}; //need to change IDs
   rev::CANSparkMax m_rightIntake{5, rev::CANSparkMax::MotorType::kBrushless};
 
   //create a MotorControllerGroup to combine all left and right motors
   frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
   frc::MotorControllerGroup m_rightMotors{m_rightMotor1, m_rightMotor2};
 
-  //Drive variable that is using motor groups
+  //Combine both motor groups
   frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
   frc::XboxController controller{0}; 
 
   //AUTO
   frc::Timer m_timer;
-  frc::Timer m_waittimer;
 
  public:
   void RobotInit() override {
@@ -134,7 +139,7 @@ class Robot : public frc::TimedRobot {
   }
 
   void TeleopPeriodic() override {
-    //spped + rotatation
+    //motor variables
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
     m_robotDrive.ArcadeDrive(speed, rotation);
