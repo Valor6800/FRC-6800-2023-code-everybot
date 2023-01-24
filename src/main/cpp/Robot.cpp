@@ -34,10 +34,6 @@
  */
 class Robot : public frc::TimedRobot {
 
-  //insersted from EVERYBOT EXAMPLE CODE-----------------------------
-  frc::PWMTalonSRX driveLeftTalon{1};
-  frc::PWMVictorSPX driveRightVictor{2}; //check which one exactly + IDs
-
   /**
    * How many amps the arm motor can use.
    */
@@ -87,19 +83,20 @@ class Robot : public frc::TimedRobot {
    * Speed to drive backwards in auto
    */
   static const double AUTO_DRIVE_SPEED = -0.25;
-  //--------------------------------------------------------------------
 
 
 
-  //creating 4 motors as it is in the robot
-  rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushed};
-  rev::CANSparkMax m_leftMotor2{2, rev::CANSparkMax::MotorType::kBrushed};
-  rev::CANSparkMax m_rightMotor1{3, rev::CANSparkMax::MotorType::kBrushed};
-  rev::CANSparkMax m_rightMotor2{4, rev::CANSparkMax::MotorType::kBrushed};
+  //motor controller example
+  //rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushed};
 
-  //2 motors for the intake
-  rev::CANSparkMax m_leftIntake{12, rev::CANSparkMax::MotorType::kBrushless}; //need to change IDs
-  rev::CANSparkMax m_rightIntake{5, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //change IDs
+  rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
+
+  //motor cotnrollers
+  frc::PWMTalonSRX m_leftMotor2{1};
+  frc::PWMTalonSRX m_leftMotor1{2};
+  rev::CANSparkMax m_rightMotor1{12, rev::CANSparkMax::MotorType::kBrushed}; //change IDs
+  rev::CANSparkMax m_rightMotor2{5, rev::CANSparkMax::MotorType::kBrushed};
 
   //create a MotorControllerGroup to combine all left and right motors
   frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
@@ -115,8 +112,6 @@ class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override {
     //make motors reset to 0
-    m_leftMotor1.RestoreFactoryDefaults();
-    m_leftMotor2.RestoreFactoryDefaults();
     m_rightMotor1.RestoreFactoryDefaults();
     m_rightMotor2.RestoreFactoryDefaults();
 
