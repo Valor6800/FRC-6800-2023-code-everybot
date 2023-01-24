@@ -95,8 +95,8 @@ class Robot : public frc::TimedRobot {
   //motor cotnrollers
   frc::PWMTalonSRX m_leftMotor2{1};
   frc::PWMTalonSRX m_leftMotor1{2};
-  rev::CANSparkMax m_rightMotor1{12, rev::CANSparkMax::MotorType::kBrushed}; //change IDs
-  rev::CANSparkMax m_rightMotor2{5, rev::CANSparkMax::MotorType::kBrushed};
+  frc::PWMTalonSRX m_rightMotor2{3};
+  frc::PWMTalonSRX m_rightMotor1{4};
 
   //create a MotorControllerGroup to combine all left and right motors
   frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
@@ -111,10 +111,6 @@ class Robot : public frc::TimedRobot {
 
  public:
   void RobotInit() override {
-    //make motors reset to 0
-    m_rightMotor1.RestoreFactoryDefaults();
-    m_rightMotor2.RestoreFactoryDefaults();
-
     m_leftIntake.RestoreFactoryDefaults();
     m_rightIntake.RestoreFactoryDefaults();
 
