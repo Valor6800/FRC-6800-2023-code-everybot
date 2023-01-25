@@ -106,7 +106,7 @@ class Robot : public frc::TimedRobot {
   frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
   frc::XboxController controller{0}; 
 
-  //AUTO
+  //Timer for Auto
   frc::Timer m_timer;
 
  public:
