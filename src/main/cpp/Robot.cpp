@@ -29,12 +29,6 @@
    std::string kAutoFowrard3 = "Red_Left";
 
 /**
- * This is a demo program showing the use of the DifferentialDrive class.
- * Runs the motors with tank steering.
- */
-class Robot : public frc::TimedRobot {
-
-  /**
    * How many amps the arm motor can use.
    */
   static const int ARM_CURRENT_LIMIT_A = 20;
@@ -85,15 +79,18 @@ class Robot : public frc::TimedRobot {
   static const double AUTO_DRIVE_SPEED = -0.25;
 
 
+class Robot : public frc::TimedRobot {
 
-  //motor controller example
+  //motor controller example:
   //rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushed};
 
+
+  //intake (For future use)
   rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //change IDs
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
 
   //motor cotnrollers
-  frc::PWMTalonSRX m_leftMotor2{1};
+  frc::PWMTalonSRX m_leftMotor2{1}; //change IDs
   frc::PWMTalonSRX m_leftMotor1{2};
   frc::PWMTalonSRX m_rightMotor2{3};
   frc::PWMTalonSRX m_rightMotor1{4};
@@ -138,7 +135,7 @@ class Robot : public frc::TimedRobot {
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
 
-    //check for left and right trigger
+    //Intake logic, need to change due to new intake
     if (controller.GetLeftTriggerAxis() > 0) {
         //intake in
         m_leftIntake.Set(-intakeSpeed);
