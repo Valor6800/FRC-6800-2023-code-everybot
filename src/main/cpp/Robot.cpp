@@ -14,6 +14,7 @@
 //#include <frc/motorcontrol/PWMTalonSRX.h> 
 #include <frc/smartdashboard/SendableChooser.h>
 #include <units/time.h>
+#include <rev/MotorFeedbackSensor.h>
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
@@ -103,11 +104,15 @@ class Robot : public frc::TimedRobot {
     //reset all motors before start
     m_leftMotor1.RestoreFactoryDefaults();
     m_leftMotor2.RestoreFactoryDefaults();
-    m_rightMotor1.RestoreFactoryDefaults();
+    m_rightMotor1.RestoreFactoryDefaults(); //test by commenting these out, one by one
     m_rightMotor2.RestoreFactoryDefaults();
 
     //right motor must be inverted for it to go forward
     m_rightMotors.SetInverted(true);
+
+    //rev::CANSparkMax::
+    //m_leftMotors.
+    //SetFeedbackDevice(FeedbackDevice::QuadratureEncoder);
     
     //list of Auto Options
     m_chooser.SetDefaultOption("NONE", kAutoDefault);
@@ -118,6 +123,8 @@ class Robot : public frc::TimedRobot {
 
     //give a 0 as initial number for intake speed
     frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
+    //Sensitivity - Initially 100%
+    frc::SmartDashboard::PutNumber("Input Sensitivity(%)", 1);
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
   }
 
@@ -131,11 +138,13 @@ class Robot : public frc::TimedRobot {
     //test
     //m_robotDrive.ArcadeDrive(0, 0);
 
+    int sens = frc::SmartDashboard::GetNumber("Input Sensitivity(%)", 1);
+
     //motor variables
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
 
-    m_robotDrive.ArcadeDrive(speed, rotation);
+    m_robotDrive.ArcadeDrive(speed * sens, rotation);
 
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
