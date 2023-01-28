@@ -1,8 +1,4 @@
 See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramDebugExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::TeleopPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:136:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  136 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
-      |            ^~~~~~~~~~~
 
 Finished compileFrcUserProgramDebugExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt.

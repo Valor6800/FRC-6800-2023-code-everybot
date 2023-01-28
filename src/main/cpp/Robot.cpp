@@ -3,23 +3,19 @@
 // the WPILib BSD license file in the root directory of this project.
 #include "frc/XboxController.h"
 #include <frc/TimedRobot.h>
+#include <frc/RobotState.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
 #include <frc/Timer.h>
-#include <frc/Notifier.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/CANSparkMax.h>
 //---
-#include <frc/motorcontrol/Victor.h>
 #include <frc/motorcontrol/PWMVictorSPX.h>
-#include <frc/motorcontrol/PWMTalonSRX.h>
-#include <frc/motorcontrol/Talon.h> //NEW MOTOR-CONTROLLER TYPES
+#include <frc/motorcontrol/PWMTalonSRX.h> //NEW MOTOR-CONTROLLER TYPES
 //---
 #include <frc/smartdashboard/SendableChooser.h>
-#include <frc/RobotState.h>
 #include <units/time.h>
-#define WPILIB_NO_UNITS
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
@@ -28,72 +24,73 @@
    std::string kAutoFowrard2 = "Red_Right";
    std::string kAutoFowrard3 = "Red_Left";
 
-/**
-   * How many amps the arm motor can use.
-   */
-  static const int ARM_CURRENT_LIMIT_A = 20;
+//   //Initial variables to use in Shuffleboard and in the code
+// /**
+//    * How many amps the arm motor can use.
+//    */
+//   static const int ARM_CURRENT_LIMIT_A = 20;
 
-  /**
-   * Percent output to run the arm up/down at
-   */
-  static const double ARM_OUTPUT_POWER = 0.4;
+//   /**
+//    * Percent output to run the arm up/down at
+//    */
+//   static const double ARM_OUTPUT_POWER = 0.4;
 
-  /**
-   * How many amps the intake can use while picking up
-   */
-  static const int INTAKE_CURRENT_LIMIT_A = 25;
+//   /**
+//    * How many amps the intake can use while picking up
+//    */
+//   static const int INTAKE_CURRENT_LIMIT_A = 25;
 
-  /**
-   * How many amps the intake can use while holding
-   */
-  static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
+//   /**
+//    * How many amps the intake can use while holding
+//    */
+//   static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
 
-  /**
-   * Percent output for intaking
-   */
-  static const double INTAKE_OUTPUT_POWER = 1.0;
+//   /**
+//    * Percent output for intaking
+//    */
+//   static const double INTAKE_OUTPUT_POWER = 1.0;
 
-  /**
-   * Percent output for holding
-   */
-  static const double INTAKE_HOLD_POWER = 0.07;
+//   /**
+//    * Percent output for holding
+//    */
+//   static const double INTAKE_HOLD_POWER = 0.07;
 
-  /**
-   * Time to extend or retract arm in auto
-   */
-  static const double ARM_EXTEND_TIME_S = 2.0;
+//   /**
+//    * Time to extend or retract arm in auto
+//    */
+//   static const double ARM_EXTEND_TIME_S = 2.0;
 
-  /**
-   * Time to throw game piece in auto
-   */
-  static const double AUTO_THROW_TIME_S = 0.375;
+//   /**
+//    * Time to throw game piece in auto
+//    */
+//   static const double AUTO_THROW_TIME_S = 0.375;
 
-  /**
-   * Time to drive back in auto
-   */
-  static const double AUTO_DRIVE_TIME = 6.0;
+//   /**
+//    * Time to drive back in auto
+//    */
+//   static const double AUTO_DRIVE_TIME = 6.0;
 
-  /**
-   * Speed to drive backwards in auto
-   */
-  static const double AUTO_DRIVE_SPEED = -0.25;
+//   /**
+//    * Speed to drive backwards in auto
+//    */
+//   static const double AUTO_DRIVE_SPEED = -0.25;
 
 
 class Robot : public frc::TimedRobot {
 
-  //motor controller example:
-  //rev::CANSparkMax m_leftMotor1{1, rev::CANSparkMax::MotorType::kBrushed};
+  //Talon motor example:
+   //frc::PWMTalonSRX{0};
 
 
   //intake (For future use)
-  rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //change IDs
+  rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //change IDs when intake will be ready
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
 
   //motor cotnrollers
-  frc::PWMTalonSRX m_leftMotor2{1}; //change IDs
-  frc::PWMTalonSRX m_leftMotor1{2};
-  frc::PWMTalonSRX m_rightMotor2{3};
-  frc::PWMTalonSRX m_rightMotor1{4};
+  rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_leftMotor2{5, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_rightMotor1{4, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_rightMotor2{1, rev::CANSparkMax::MotorType::kBrushed};
 
   //create a MotorControllerGroup to combine all left and right motors
   frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
@@ -108,8 +105,11 @@ class Robot : public frc::TimedRobot {
 
  public:
   void RobotInit() override {
-    m_leftIntake.RestoreFactoryDefaults();
-    m_rightIntake.RestoreFactoryDefaults();
+    //reset all motors before start
+    m_leftMotor1.RestoreFactoryDefaults();
+    m_leftMotor2.RestoreFactoryDefaults();
+    m_rightMotor1.RestoreFactoryDefaults();
+    m_rightMotor2.RestoreFactoryDefaults();
 
     //right motor must be inverted for it to go forward
     m_rightMotors.SetInverted(true);
@@ -127,9 +127,18 @@ class Robot : public frc::TimedRobot {
   }
 
   void TeleopPeriodic() override {
+    //m_leftMotor1.SetSimFreeSpeed(rev::MotorFeedbackSensor::SetInverted);
+
+  //button that moves robot forward with constant motor capacity 70%
+     if (controller.GetAButton()) {
+      m_robotDrive.ArcadeDrive(0.7, 0);
+    }
+    //m_robotDrive.ArcadeDrive(0, 0); //may delete later
+
     //motor variables
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
+
     m_robotDrive.ArcadeDrive(speed, rotation);
 
     //initial speed of the intake will be 40%
@@ -154,7 +163,7 @@ class Robot : public frc::TimedRobot {
     
   }
 
-    //*************************************************AUTONOMUS PART*************************************************************
+    //*************************************************AUTONOMUS PART bellow*************************************************************
   void AutonomousInit() override {
     m_timer.Reset();
     m_timer.Start();
@@ -317,7 +326,6 @@ class Robot : public frc::TimedRobot {
     }
     
   }
-  //**************************************************************************************************************************
 };
 
 #ifndef RUNNING_FRC_TESTS
