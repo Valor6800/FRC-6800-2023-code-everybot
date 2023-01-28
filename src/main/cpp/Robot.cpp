@@ -10,10 +10,8 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/CANSparkMax.h>
-//---
-#include <frc/motorcontrol/PWMVictorSPX.h>
-#include <frc/motorcontrol/PWMTalonSRX.h> //NEW MOTOR-CONTROLLER TYPES
-//---
+//#include <frc/motorcontrol/PWMVictorSPX.h>
+//#include <frc/motorcontrol/PWMTalonSRX.h> 
 #include <frc/smartdashboard/SendableChooser.h>
 #include <units/time.h>
 
@@ -24,62 +22,59 @@
    std::string kAutoFowrard2 = "Red_Right";
    std::string kAutoFowrard3 = "Red_Left";
 
-//   //Initial variables to use in Shuffleboard and in the code
-// /**
-//    * How many amps the arm motor can use.
-//    */
-//   static const int ARM_CURRENT_LIMIT_A = 20;
+  //Initial variables to use in Shuffleboard and in the code
+  /**
+   * How many amps the arm motor can use.
+   */
+  static const int ARM_CURRENT_LIMIT_A = 20;
 
-//   /**
-//    * Percent output to run the arm up/down at
-//    */
-//   static const double ARM_OUTPUT_POWER = 0.4;
+  /**
+   * Percent output to run the arm up/down at
+   */
+  static const double ARM_OUTPUT_POWER = 0.4;
 
-//   /**
-//    * How many amps the intake can use while picking up
-//    */
-//   static const int INTAKE_CURRENT_LIMIT_A = 25;
+  /**
+   * How many amps the intake can use while picking up
+   */
+  static const int INTAKE_CURRENT_LIMIT_A = 25;
 
-//   /**
-//    * How many amps the intake can use while holding
-//    */
-//   static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
+  /**
+   * How many amps the intake can use while holding
+   */
+  static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
 
-//   /**
-//    * Percent output for intaking
-//    */
-//   static const double INTAKE_OUTPUT_POWER = 1.0;
+  /**
+   * Percent output for intaking
+   */
+  static const double INTAKE_OUTPUT_POWER = 1.0;
 
-//   /**
-//    * Percent output for holding
-//    */
-//   static const double INTAKE_HOLD_POWER = 0.07;
+  /**
+   * Percent output for holding
+   */
+  static const double INTAKE_HOLD_POWER = 0.07;
 
-//   /**
-//    * Time to extend or retract arm in auto
-//    */
-//   static const double ARM_EXTEND_TIME_S = 2.0;
+  /**
+   * Time to extend or retract arm in auto
+   */
+  static const double ARM_EXTEND_TIME_S = 2.0;
 
-//   /**
-//    * Time to throw game piece in auto
-//    */
-//   static const double AUTO_THROW_TIME_S = 0.375;
+  /**
+   * Time to throw game piece in auto
+   */
+  static const double AUTO_THROW_TIME_S = 0.375;
 
-//   /**
-//    * Time to drive back in auto
-//    */
-//   static const double AUTO_DRIVE_TIME = 6.0;
+  /**
+   * Time to drive back in auto
+   */
+  static const double AUTO_DRIVE_TIME = 6.0;
 
-//   /**
-//    * Speed to drive backwards in auto
-//    */
-//   static const double AUTO_DRIVE_SPEED = -0.25;
+  /**
+   * Speed to drive backwards in auto
+   */
+  static const double AUTO_DRIVE_SPEED = -0.25;
 
 
 class Robot : public frc::TimedRobot {
-
-  //Talon motor example:
-   //frc::PWMTalonSRX{0};
 
 
   //intake (For future use)
@@ -127,13 +122,14 @@ class Robot : public frc::TimedRobot {
   }
 
   void TeleopPeriodic() override {
-    //m_leftMotor1.SetSimFreeSpeed(rev::MotorFeedbackSensor::SetInverted);
 
   //button that moves robot forward with constant motor capacity 70%
      if (controller.GetAButton()) {
+      //need to make it so it works only when button is pressed
       m_robotDrive.ArcadeDrive(0.7, 0);
     }
-    //m_robotDrive.ArcadeDrive(0, 0); //may delete later
+    //test
+    //m_robotDrive.ArcadeDrive(0, 0);
 
     //motor variables
     double speed = controller.GetLeftY();
