@@ -82,7 +82,7 @@ class Robot : public frc::TimedRobot {
   //Intake - Total CanSparkMaxes: 4
   rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //CHANGE IDS FOR INTAKE
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
-  //rev::CANSparkMax m_rightIntake{6, rev::CANSparkMax::MotorType::kBrushed}; 
+  //rev::CANSparkMax m_rightIntake{6, rev::CANSparkMax::MotorType::kBrushed}; //more motor controllers for the intake
   //rev::CANSparkMax m_leftIntake{7, rev::CANSparkMax::MotorType::kBrushed};
 
   //motor cotnrollers
@@ -129,9 +129,14 @@ class Robot : public frc::TimedRobot {
     //give a 0 as initial number for intake speed
     frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
     //Sensitivity - Initially 100%
-    frc::SmartDashboard::PutNumber("Input Sensitivity(%)", 1);
+    frc::SmartDashboard::PutNumber("Input Sensitivity(1 = 100%)", 1);
     //initial delay is 0 sec
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
+
+    //Need to implement into the driving code
+    frc::SmartDashboard::PutNumber("drive left power (1 = 100%)", 1);
+    frc::SmartDashboard::PutNumber("drive right power (1 = 100%)", 1);
+
   }
 
   void TeleopPeriodic() override {
@@ -145,13 +150,23 @@ class Robot : public frc::TimedRobot {
       m_robotDrive.ArcadeDrive(0, 0);
     }
 
-    int sens = frc::SmartDashboard::GetNumber("Input Sensitivity(%)", 1);
+    //numbers from shuffleboard that can limit left/right side of motors
+    int m_limitLeft = frc::SmartDashboard::GetNumber("drive left power (1 = 100%)", 1);
+    int m_limitRight = frc::SmartDashboard::GetNumber("drive right power (1 = 100%)", 1);
+
+    //limit motors, initial variable 100%
+    m_leftMotors.Set(m_limitLeft);
+    m_rightMotors.Set(m_limitRight);
+
+
+    int sens1 = frc::SmartDashboard::GetNumber("Input Sensitivity(1 = 100%)", 100);
+    int sens2 = sens1/100;
 
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
 
-    m_robotDrive.ArcadeDrive(speed * sens, rotation);
+    m_robotDrive.ArcadeDrive(speed * sens2, rotation);
 
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
@@ -174,8 +189,10 @@ class Robot : public frc::TimedRobot {
     }
     
   }
-
     //*************************************************AUTONOMUS PART BELLOW*************************************************************
+    //   Red_Right = Blue_Left
+    //   Red_Left = Blue_Right
+    //   Red_Mid = Blue_Mid
   void AutonomousInit() override {
     m_timer.Reset();
     m_timer.Start();
@@ -336,12 +353,148 @@ class Robot : public frc::TimedRobot {
     }
 
     else if(selectedOption == "Blue_Right"){
+      //ROBOT MUST FACE THE DRIVER
+
+      //What this Auto is doing:
+      //1. facing driver it goes a little forward with object and release it
+      //2. turn 90 degrees to the left + forward for a few meters
+      //3. turn left again facing the bridge
+      //4. getting up to the bridge with lower speed 
+      if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+      else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees
+        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+        //INTAKE ON
+      }
+      else if (m_timer.Get() < 0.85_s + secondsX){
+        m_robotDrive.TankDrive(0.7, -0.7, false);
+        //INAKE OFF
+      }
+      else if (m_timer.Get() < 1.85_s + secondsX){
+        m_robotDrive.ArcadeDrive(-0.5, 0, false);
+      }
+      else if (m_timer.Get() < 2.3_s + secondsX){
+        m_robotDrive.TankDrive(0.72, -0.72, false);
+      }
+      else if (m_timer.Get() < 3.7_s + secondsX){
+        m_robotDrive.ArcadeDrive(-0.3, 0, false);
+      }
+      else if(m_timer.Get() < 15_s + secondsX){
+        m_robotDrive.ArcadeDrive(0, 0, false); 
+      }
     }
 
     else if(selectedOption == "Blue_Mid"){
+      //ROBOT MUST FACE THE DRIVER
+
+      //What this Auto is doing:
+      //1. facing driver it goes a little forward with object and release it
+      //2. turn 180 degrees to the left + forward - slow to get through te bridge
+      //3. get the object in the middle of the field
+      //4. may chose to go both to the left or right.
+      if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+      else if(m_timer.Get() < 0.75_s + secondsX){ //0.48 if nothing else is wokring is perfect to turn right 90 degrees
+        m_robotDrive.TankDrive(-0.55, 0.55, false); 
+      }
+      else if(m_timer.Get() < 2_s + secondsX){
+          m_robotDrive.ArcadeDrive(-0.55, 0.0, false); 
+      }
+      else if(m_timer.Get() < 2.5_s + secondsX){
+          m_robotDrive.ArcadeDrive(0, 0.0, false); 
+      }
+      else if(m_timer.Get() < 3.2_s + secondsX){ 
+        m_robotDrive.TankDrive(0.65, -0.65, false); 
+      }
+      else if(m_timer.Get() < 3.6_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(0, 0, false);
+      }
+      else if(m_timer.Get() < 4.4_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(-.9, 0, false);
+      }
+      else if(m_timer.Get() < 5.65_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(0, 0, false);
+      }
+      else if(m_timer.Get() < 6.7_s + secondsX){ 
+        m_robotDrive.TankDrive(-0.6, 0.6, false); 
+      }
+      else if(m_timer.Get() < 7_s + secondsX){ 
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 9_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(-.5, 0, false); 
+      }
+      else if(m_timer.Get() < 10_s + secondsX){ 
+        m_robotDrive.ArcadeDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 10.75_s + secondsX){ 
+        m_robotDrive.TankDrive(-0.6, 0.6, false); 
+      }
+      else if(m_timer.Get() < 15_s + secondsX){
+        m_robotDrive.ArcadeDrive(0, 0, false); 
+      }
     }
 
     else if(selectedOption == "Blue_Left"){
+      //ROBOT MUST FACE THE DRIVER
+
+      //What this Auto is doing:
+      //1. facing driver it goes a little forward with object and release it
+      //2. turn 180 degrees to the left + forward until obejct is hit
+      //3. capture the object and turn 180 degrees
+      //4. go back and put the object in different place
+      if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+      else if(m_timer.Get() < 0.2_s + secondsX){
+        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
+      }
+      else if (m_timer.Get() < 0.5_s + secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
+      }
+      else if(m_timer.Get() < 1.3_s + secondsX){
+          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 and 0.79
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
+      }
+      else if(m_timer.Get() < 1.5_s + secondsX){
+          m_robotDrive.TankDrive(0, 0.0, false);
+      }
+      else if(m_timer.Get() < 3_s + secondsX){
+          m_robotDrive.ArcadeDrive(-0.65, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
+      }
+      else if(m_timer.Get() < 5_s + secondsX){
+          m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
+      }
+      else if(m_timer.Get() < 6_s + secondsX){
+          m_robotDrive.TankDrive(-.8, .8, false); 
+      }
+      else if(m_timer.Get() < 6.1_s + secondsX){
+          m_robotDrive.TankDrive(0, 0, false); 
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
+      }
+      else if(m_timer.Get() < 7.35_s + secondsX){
+          m_robotDrive.ArcadeDrive(-0.75, 0.0, false); 
+      }
+      else if(m_timer.Get() < 8.1_s + secondsX){
+          m_robotDrive.ArcadeDrive(0, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
+      }
+      else if(m_timer.Get() < 9.1_s + secondsX){
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
+      }
+      else if(m_timer.Get() < 15_s + secondsX){
+          m_robotDrive.TankDrive(0, 0.0, false);
+      }
     }
   }
 };
