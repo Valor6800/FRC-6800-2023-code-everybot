@@ -140,7 +140,7 @@ class Robot : public frc::TimedRobot {
   }
 
   void TeleopPeriodic() override {
-
+  //----------------------------------------------------------------------------NEED TO TEST----------------------------------------------------------------------
   //button that moves robot forward with constant motor capacity 70% (TEST)
   //when A is clicked on the controller
      if (controller.GetAButton() > 0) {
@@ -154,13 +154,15 @@ class Robot : public frc::TimedRobot {
     int m_limitLeft = frc::SmartDashboard::GetNumber("drive left power (1 = 100%)", 1);
     int m_limitRight = frc::SmartDashboard::GetNumber("drive right power (1 = 100%)", 1);
 
-    //limit motors, initial variable 100%
+    //limit motors, initial variable 100% range -1.0 to 1.0
     m_leftMotors.Set(m_limitLeft);
     m_rightMotors.Set(m_limitRight);
 
 
     int sens1 = frc::SmartDashboard::GetNumber("Input Sensitivity(1 = 100%)", 100);
     int sens2 = sens1/100;
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY();
