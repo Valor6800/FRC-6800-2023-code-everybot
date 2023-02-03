@@ -13,7 +13,6 @@
 //#include <frc/motorcontrol/PWMVictorSPX.h>
 //#include <frc/motorcontrol/PWMTalonSRX.h> 
 #include <frc/smartdashboard/SendableChooser.h>
-#include <units/time.h>
 #include <rev/MotorFeedbackSensor.h>
 
   //auto options
@@ -22,8 +21,10 @@
    std::string kAutoFowrard1 = "Red_Mid";
    std::string kAutoFowrard2 = "Red_Right";
    std::string kAutoFowrard3 = "Red_Left";
+   std::string kAutoFowrard4 = "Blue_Mid";
+   std::string kAutoFowrard5 = "Blue_Right";
+   std::string kAutoFowrard6 = "Blue_Left";
 
-  //Initial variables to use in Shuffleboard and in the code
   /**
    * How many amps the arm motor can use.
    */
@@ -78,9 +79,11 @@
 class Robot : public frc::TimedRobot {
 
 
-  //intake (For future use)
-  rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //change IDs when intake will be ready
+  //Intake - Total CanSparkMaxes: 4
+  rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //CHANGE IDS FOR INTAKE
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
+  //rev::CANSparkMax m_rightIntake{6, rev::CANSparkMax::MotorType::kBrushed}; 
+  //rev::CANSparkMax m_leftIntake{7, rev::CANSparkMax::MotorType::kBrushed};
 
   //motor cotnrollers
   rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
@@ -102,45 +105,49 @@ class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override {
     //reset all motors before start
+    //need to add more as intake is developed
+    m_leftIntake.RestoreFactoryDefaults();
+    m_rightIntake.RestoreFactoryDefaults();
     m_leftMotor1.RestoreFactoryDefaults();
     m_leftMotor2.RestoreFactoryDefaults();
-    m_rightMotor1.RestoreFactoryDefaults(); //test by commenting these out, one by one
+    m_rightMotor1.RestoreFactoryDefaults();
     m_rightMotor2.RestoreFactoryDefaults();
 
     //right motor must be inverted for it to go forward
     m_rightMotors.SetInverted(true);
-
-    //rev::CANSparkMax::
-    //m_leftMotors.
-    //SetFeedbackDevice(FeedbackDevice::QuadratureEncoder);
     
     //list of Auto Options
     m_chooser.SetDefaultOption("NONE", kAutoDefault);
     m_chooser.AddOption("Red_Mid", kAutoFowrard1);
     m_chooser.AddOption("Red_Right", kAutoFowrard2);
     m_chooser.AddOption("Red_Left", kAutoFowrard3);
+    m_chooser.AddOption("Blue_Mid", kAutoFowrard4);
+    m_chooser.AddOption("Blue_Right", kAutoFowrard5);
+    m_chooser.AddOption("Blue_Left", kAutoFowrard6);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
     frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
     //Sensitivity - Initially 100%
     frc::SmartDashboard::PutNumber("Input Sensitivity(%)", 1);
+    //initial delay is 0 sec
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
   }
 
   void TeleopPeriodic() override {
 
-  //button that moves robot forward with constant motor capacity 70%
-     if (controller.GetAButton()) {
-      //need to make it so it works only when button is pressed
+  //button that moves robot forward with constant motor capacity 70% (TEST)
+  //when A is clicked on the controller
+     if (controller.GetAButton() > 0) {
       m_robotDrive.ArcadeDrive(0.7, 0);
     }
-    //test
-    //m_robotDrive.ArcadeDrive(0, 0);
+    else{
+      m_robotDrive.ArcadeDrive(0, 0);
+    }
 
     int sens = frc::SmartDashboard::GetNumber("Input Sensitivity(%)", 1);
 
-    //motor variables
+    //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
 
@@ -168,7 +175,7 @@ class Robot : public frc::TimedRobot {
     
   }
 
-    //*************************************************AUTONOMUS PART bellow*************************************************************
+    //*************************************************AUTONOMUS PART BELLOW*************************************************************
   void AutonomousInit() override {
     m_timer.Reset();
     m_timer.Start();
@@ -215,7 +222,6 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.ArcadeDrive(0, 0, false); 
       }
     }
-
 
     else if(selectedOption == "Red_Mid"){
       //ROBOT MUST FACE THE DRIVER
@@ -268,7 +274,6 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.ArcadeDrive(0, 0, false); 
       }
     }
-
 
     else if(selectedOption == "Red_Right"){
       //ROBOT MUST FACE THE DRIVER
@@ -329,7 +334,15 @@ class Robot : public frc::TimedRobot {
           m_robotDrive.TankDrive(0, 0.0, false);
       }
     }
-    
+
+    else if(selectedOption == "Blue_Right"){
+    }
+
+    else if(selectedOption == "Blue_Mid"){
+    }
+
+    else if(selectedOption == "Blue_Left"){
+    }
   }
 };
 
