@@ -53,14 +53,19 @@
 
 class Robot : public frc::TimedRobot {
 
-
-  //Intake - Total CanSparkMaxes: 4
+  //LEFT + RIGHT INTAKE (Replace with new motor controllers)
   rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //CHANGE IDS FOR INTAKE
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
-  //rev::CANSparkMax m_rightIntake{6, rev::CANSparkMax::MotorType::kBrushed}; //more motor controllers for the intake
-  //rev::CANSparkMax m_leftIntake{7, rev::CANSparkMax::MotorType::kBrushed};
 
-  //motor cotnrollers
+  //Motor controller for arm and intake (Main)
+  rev::CANSparkMax m_armMotor{1, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for arm
+  rev::CANSparkMax m_intakeMotor{2, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for intake
+
+  //Create group if need to combine with something else later
+  frc::MotorControllerGroup m_armController{m_armMotor};
+  frc::MotorControllerGroup m_intakeController{m_intakeMotor};
+
+  //4 main drive motor cotnrollers
   rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_leftMotor2{5, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_rightMotor1{4, rev::CANSparkMax::MotorType::kBrushed};
@@ -155,6 +160,15 @@ class Robot : public frc::TimedRobot {
 
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
+
+
+    //possible intake code
+    // code to control arm movement using left joystick
+    // m_armController.Set(controller.GetY(frc::XboxController::JoystickHand::kLeftHand));
+    
+    // code to control intake motor with right trigger
+    // m_intakeController.Set(controller.GetTriggerAxis(frc::XboxController::JoystickHand::kRightHand));
+
 
     //Intake logic, need to change due to new intake
     if (controller.GetLeftTriggerAxis() > 0) {
