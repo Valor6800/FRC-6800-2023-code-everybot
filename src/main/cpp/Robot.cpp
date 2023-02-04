@@ -352,34 +352,7 @@ class Robot : public frc::TimedRobot {
     }
 
     else if(selectedOption == "Blue_Right"){
-      //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing:
-      //1. facing driver it goes a little forward with object and release it
-      //2. turn 90 degrees to the left + forward for a few meters
-      //3. turn left again facing the bridge
-      //4. getting up to the bridge with lower speed 
-      if(m_timer.Get() < secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-      }
-      else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees when charge is 100%
-        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-      }
-      else if (m_timer.Get() < 0.85_s + secondsX){
-        m_robotDrive.TankDrive(0.7, -0.7, false);
-      }
-      else if (m_timer.Get() < 1.85_s + secondsX){
-        m_robotDrive.ArcadeDrive(-0.5, 0, false);
-      }
-      else if (m_timer.Get() < 2.3_s + secondsX){
-        m_robotDrive.TankDrive(0.72, -0.72, false);
-      }
-      else if (m_timer.Get() < 3.7_s + secondsX){
-        m_robotDrive.ArcadeDrive(-0.3, 0, false);
-      }
-      else if(m_timer.Get() < 15_s + secondsX){
-        m_robotDrive.ArcadeDrive(0, 0, false); 
-      }
+  
     }
 
     else if(selectedOption == "Blue_Mid"){
@@ -435,63 +408,7 @@ class Robot : public frc::TimedRobot {
     }
 
     else if(selectedOption == "Blue_Left"){
-      //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing:
-      //1. facing driver it goes a little forward with object and release it
-      //2. turn 180 degrees to the left + forward until obejct is hit
-      //3. capture the object and turn 180 degrees
-      //4. go back and put the object in different place
-      if(m_timer.Get() < secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-      }
-      else if(m_timer.Get() < 0.2_s + secondsX){
-        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-      }
-      else if (m_timer.Get() < 0.5_s + secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
-          m_leftIntake.Set(intakeSpeed);
-          m_rightIntake.Set(-intakeSpeed);
-      }
-      else if(m_timer.Get() < 1.3_s + secondsX){
-          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 and 0.79 when charge is 100%
-          m_leftIntake.Set(0);
-          m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 1.5_s + secondsX){
-          m_robotDrive.TankDrive(0, 0.0, false);
-      }
-      else if(m_timer.Get() < 3_s + secondsX){
-          m_robotDrive.ArcadeDrive(-0.65, 0.0, false); 
-          m_leftIntake.Set(intakeSpeed);
-          m_rightIntake.Set(-intakeSpeed);
-      }
-      else if(m_timer.Get() < 5_s + secondsX){
-          m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
-      }
-      else if(m_timer.Get() < 6_s + secondsX){
-          m_robotDrive.TankDrive(-.8, .8, false); 
-      }
-      else if(m_timer.Get() < 6.1_s + secondsX){
-          m_robotDrive.TankDrive(0, 0, false); 
-          m_leftIntake.Set(0);
-          m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 7.35_s + secondsX){
-          m_robotDrive.ArcadeDrive(-0.75, 0.0, false); 
-      }
-      else if(m_timer.Get() < 8.1_s + secondsX){
-          m_robotDrive.ArcadeDrive(0, 0.0, false); 
-          m_leftIntake.Set(intakeSpeed);
-          m_rightIntake.Set(-intakeSpeed);
-      }
-      else if(m_timer.Get() < 9.1_s + secondsX){
-          m_leftIntake.Set(0);
-          m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 15_s + secondsX){
-          m_robotDrive.TankDrive(0, 0.0, false);
-      }
+      
     }
   }
 };
