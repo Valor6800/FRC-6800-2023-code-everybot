@@ -171,28 +171,24 @@ class Robot : public frc::TimedRobot {
 
 
     //Intake logic, need to change due to new intake
-    if (controller.GetLeftTriggerAxis() > 0) {
-        //intake in
-        m_leftIntake.Set(-intakeSpeed);
-        m_rightIntake.Set(intakeSpeed);
-    }
-    else if (controller.GetRightTriggerAxis() > 0) {
-        //intake out
-        m_leftIntake.Set(intakeSpeed);
-        m_rightIntake.Set(-intakeSpeed);
-    }
-    else {
-        //if none, set to 0
-        m_leftIntake.Set(0);
-        m_rightIntake.Set(0);
-    }
+    // if (controller.GetLeftTriggerAxis() > 0) {
+    //     //intake in
+    //     m_leftIntake.Set(-intakeSpeed);
+    //     m_rightIntake.Set(intakeSpeed);
+    // }
+    // else if (controller.GetRightTriggerAxis() > 0) {
+    //     //intake out
+    //     m_leftIntake.Set(intakeSpeed);
+    //     m_rightIntake.Set(-intakeSpeed);
+    // }
+    // else {
+    //     //if none, set to 0
+    //     m_leftIntake.Set(0);
+    //     m_rightIntake.Set(0);
+    // }
     
   }
     //*************************************************AUTONOMUS PART BELLOW*************************************************************
-    //   Red_Right = Blue_Left
-    //   Red_Left = Blue_Right
-    //   Red_Mid = Blue_Mid
-
   void AutonomousInit() override {
     m_timer.Reset();
     m_timer.Start();
