@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 #include "frc/XboxController.h"
 #include <frc/TimedRobot.h>
 #include <frc/RobotState.h>
@@ -10,8 +7,6 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/CANSparkMax.h>
-//#include <frc/motorcontrol/PWMVictorSPX.h>
-//#include <frc/motorcontrol/PWMTalonSRX.h> 
 #include <frc/smartdashboard/SendableChooser.h>
 #include <rev/MotorFeedbackSensor.h>
 
@@ -25,54 +20,34 @@
    std::string kAutoFowrard5 = "Blue_Right";
    std::string kAutoFowrard6 = "Blue_Left";
 
-  /**
-   * How many amps the arm motor can use.
-   */
+  //How many amps the arm motor can use.
   static const int ARM_CURRENT_LIMIT_A = 20;
 
-  /**
-   * Percent output to run the arm up/down at
-   */
+  //Percent output to run the arm up/down at
   static const double ARM_OUTPUT_POWER = 0.4;
 
-  /**
-   * How many amps the intake can use while picking up
-   */
+  //How many amps the intake can use while picking up
   static const int INTAKE_CURRENT_LIMIT_A = 25;
 
-  /**
-   * How many amps the intake can use while holding
-   */
+  //How many amps the intake can use while holding
   static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
 
-  /**
-   * Percent output for intaking
-   */
+  //Percent output for intaking
   static const double INTAKE_OUTPUT_POWER = 1.0;
 
-  /**
-   * Percent output for holding
-   */
+  //Percent output for holding
   static const double INTAKE_HOLD_POWER = 0.07;
 
-  /**
-   * Time to extend or retract arm in auto
-   */
+  //Time to extend or retract arm in auto
   static const double ARM_EXTEND_TIME_S = 2.0;
 
-  /**
-   * Time to throw game piece in auto
-   */
+  //Time to throw game piece in auto
   static const double AUTO_THROW_TIME_S = 0.375;
 
-  /**
-   * Time to drive back in auto
-   */
+  //Time to drive back in auto
   static const double AUTO_DRIVE_TIME = 6.0;
 
-  /**
-   * Speed to drive backwards in auto
-   */
+  //Speed to drive backwards in auto
   static const double AUTO_DRIVE_SPEED = -0.25;
 
 
@@ -141,26 +116,34 @@ class Robot : public frc::TimedRobot {
 
   void TeleopPeriodic() override {
   //----------------------------------------------------------------------------NEED TO TEST----------------------------------------------------------------------
-  //button that moves robot forward with constant motor capacity 70% (TEST)
-  //when A is clicked on the controller
-     if (controller.GetAButton() > 0) {
+    // Read the value of the A button on the controller
+    bool aButtonPressed = (controller.GetAButton() > 0);
+
+    // Drive the robot forward when the A button is pressed
+    // Otherwise, set the motors to zero
+    if (aButtonPressed)
+    {
       m_robotDrive.ArcadeDrive(0.7, 0);
     }
-    else{
+    else 
+    {
       m_robotDrive.ArcadeDrive(0, 0);
     }
 
     //numbers from shuffleboard that can limit left/right side of motors
-    int m_limitLeft = frc::SmartDashboard::GetNumber("drive left power (1 = 100%)", 1);
-    int m_limitRight = frc::SmartDashboard::GetNumber("drive right power (1 = 100%)", 1);
+    double m_limitLeft = frc::SmartDashboard::GetNumber("drive left power (1 = 100%)", 1);
+    double m_limitRight = frc::SmartDashboard::GetNumber("drive right power (1 = 100%)", 1);
 
-    //limit motors, initial variable 100% range -1.0 to 1.0
+    //sensitivity value to reduce total speed of the motors
+    int sens = frc::SmartDashboard::GetNumber("Input Sensitivity(1 = 100%)", 1);
+
+    // Scale the limit values by the sensitivity value
+    m_limitLeft *= sens;
+    m_limitRight *= sens;
+
+    // Set the power levels of the motors based on the limits
     m_leftMotors.Set(m_limitLeft);
     m_rightMotors.Set(m_limitRight);
-
-
-    int sens1 = frc::SmartDashboard::GetNumber("Input Sensitivity(1 = 100%)", 100);
-    int sens2 = sens1/100;
 
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -168,7 +151,7 @@ class Robot : public frc::TimedRobot {
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
 
-    m_robotDrive.ArcadeDrive(speed * sens2, rotation);
+    m_robotDrive.ArcadeDrive(speed * sens, rotation);
 
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
@@ -195,6 +178,7 @@ class Robot : public frc::TimedRobot {
     //   Red_Right = Blue_Left
     //   Red_Left = Blue_Right
     //   Red_Mid = Blue_Mid
+
   void AutonomousInit() override {
     m_timer.Reset();
     m_timer.Start();
@@ -203,7 +187,8 @@ class Robot : public frc::TimedRobot {
   void AutonomousPeriodic() override {
     //initial values for the auto
     int x = frc::SmartDashboard::GetNumber("Delay (Sec)", 0);
-    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.8);
+    //inital speed of the intake is 40% for the sake of testing
+    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
     std::string selectedOption = m_chooser.GetSelected();
     //convertion of double into seconds
     units::unit_t<units::time::second, double, units::linear_scale> secondsX(x);
@@ -222,11 +207,9 @@ class Robot : public frc::TimedRobot {
       }
       else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees
         m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-        //INTAKE ON
       }
       else if (m_timer.Get() < 0.85_s + secondsX){
         m_robotDrive.TankDrive(0.7, -0.7, false);
-        //INAKE OFF
       }
       else if (m_timer.Get() < 1.85_s + secondsX){
         m_robotDrive.ArcadeDrive(-0.5, 0, false);
@@ -314,7 +297,7 @@ class Robot : public frc::TimedRobot {
           m_rightIntake.Set(-intakeSpeed);
       }
       else if(m_timer.Get() < 1.3_s + secondsX){
-          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 and 0.79
+          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 when charge is 100%
           m_leftIntake.Set(0);
           m_rightIntake.Set(0);
       }
@@ -365,13 +348,11 @@ class Robot : public frc::TimedRobot {
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
-      else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees
+      else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees when charge is 100%
         m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-        //INTAKE ON
       }
       else if (m_timer.Get() < 0.85_s + secondsX){
         m_robotDrive.TankDrive(0.7, -0.7, false);
-        //INAKE OFF
       }
       else if (m_timer.Get() < 1.85_s + secondsX){
         m_robotDrive.ArcadeDrive(-0.5, 0, false);
@@ -459,7 +440,7 @@ class Robot : public frc::TimedRobot {
           m_rightIntake.Set(-intakeSpeed);
       }
       else if(m_timer.Get() < 1.3_s + secondsX){
-          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 and 0.79
+          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 and 0.79 when charge is 100%
           m_leftIntake.Set(0);
           m_rightIntake.Set(0);
       }
