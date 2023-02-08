@@ -162,9 +162,9 @@ class Robot : public frc::TimedRobot {
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
 
 
-    //possible intake code
+    //possible intake code with arm and intake
     // code to control arm movement using left joystick
-    // m_armController.Set(controller.GetY(frc::XboxController::JoystickHand::kLeftHand));
+    //m_armController.Set(controller.GetY(frc::XboxController::JoystickHand::kLeftHand));
     
     // code to control intake motor with right trigger
     // m_intakeController.Set(controller.GetTriggerAxis(frc::XboxController::JoystickHand::kRightHand));
