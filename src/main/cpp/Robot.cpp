@@ -16,6 +16,7 @@
    std::string kAutoFowrard1 = "Red_Mid";
    std::string kAutoFowrard2 = "Red_Right";
    std::string kAutoFowrard3 = "Red_Left";
+   //work on autos as bumbers will be ready
    std::string kAutoFowrard4 = "Blue_Mid";
    std::string kAutoFowrard5 = "Blue_Right";
    std::string kAutoFowrard6 = "Blue_Left";
@@ -58,12 +59,12 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
 
   //Motor controller for arm and intake (Main)
-  rev::CANSparkMax m_armMotor{1, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for arm
-  rev::CANSparkMax m_intakeMotor{2, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for intake
+  //rev::CANSparkMax m_armMotor{1, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for arm
+  //rev::CANSparkMax m_intakeMotor{2, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for intake
 
   //Create group if need to combine with something else later
-  frc::MotorControllerGroup m_armController{m_armMotor};
-  frc::MotorControllerGroup m_intakeController{m_intakeMotor};
+  //frc::MotorControllerGroup m_armController{m_armMotor};
+  //frc::MotorControllerGroup m_intakeController{m_intakeMotor};
 
   //4 main drive motor cotnrollers
   rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
@@ -172,17 +173,17 @@ class Robot : public frc::TimedRobot {
 
     //Intake logic, need to change due to new intake
     // if (controller.GetLeftTriggerAxis() > 0) {
-    //     //intake in
+    //intake in
     //     m_leftIntake.Set(-intakeSpeed);
     //     m_rightIntake.Set(intakeSpeed);
     // }
     // else if (controller.GetRightTriggerAxis() > 0) {
-    //     //intake out
+    //intake out
     //     m_leftIntake.Set(intakeSpeed);
     //     m_rightIntake.Set(-intakeSpeed);
     // }
     // else {
-    //     //if none, set to 0
+    //if none, set to 0
     //     m_leftIntake.Set(0);
     //     m_rightIntake.Set(0);
     // }
