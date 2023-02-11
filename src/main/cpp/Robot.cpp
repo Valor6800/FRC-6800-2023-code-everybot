@@ -109,8 +109,6 @@ class Robot : public frc::TimedRobot {
 
     //give a 0 as initial number for intake speed
     frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
-    //Sensitivity - Initially 100%
-    frc::SmartDashboard::PutNumber("Input Sensitivity(1 = 100%)", 1);
     //initial delay is 0 sec
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
 
@@ -118,38 +116,28 @@ class Robot : public frc::TimedRobot {
     frc::SmartDashboard::PutNumber("drive left power (1 = 100%)", 1);
     frc::SmartDashboard::PutNumber("drive right power (1 = 100%)", 1);
 
+    frc::SmartDashboard::PutNumber("Rotation Power", 0.3); //30% to check
+    frc::SmartDashboard::PutNumber("Speed Power", 1);
+
   }
 
   void TeleopPeriodic() override {
   //----------------------------------------------------------------------------NEED TO TEST----------------------------------------------------------------------
-    // Read the value of the A button on the controller
-    bool aButtonPressed = (controller.GetAButton() > 0);
 
     // Drive the robot forward when the A button is pressed
     // Otherwise, set the motors to zero
-    if (aButtonPressed)
-    {
-      m_robotDrive.ArcadeDrive(0.7, 0);
-    }
-    else 
-    {
+    if(controller.GetAButton() > 0){
+        m_robotDrive.ArcadeDrive(0.9, 0);
+    }else{
       m_robotDrive.ArcadeDrive(0, 0);
     }
+
+    double m_rot = frc::SmartDashboard::GetNumber("Rotation Power", 0.3);
+    double sens = frc::SmartDashboard::GetNumber("Speed Power", 1);
 
     //numbers from shuffleboard that can limit left/right side of motors
     double m_limitLeft = frc::SmartDashboard::GetNumber("drive left power (1 = 100%)", 1);
     double m_limitRight = frc::SmartDashboard::GetNumber("drive right power (1 = 100%)", 1);
-
-    //sensitivity value to reduce total speed of the motors
-    int sens = frc::SmartDashboard::GetNumber("Input Sensitivity(1 = 100%)", 1);
-
-    // Scale the limit values by the sensitivity value
-    m_limitLeft *= sens;
-    m_limitRight *= sens;
-
-    // Set the power levels of the motors based on the limits
-    m_leftMotors.Set(m_limitLeft);
-    m_rightMotors.Set(m_limitRight);
 
     //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -157,7 +145,7 @@ class Robot : public frc::TimedRobot {
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
 
-    m_robotDrive.ArcadeDrive(speed * sens, rotation);
+    m_robotDrive.ArcadeDrive(speed * sens, rotation * m_rot);
 
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
