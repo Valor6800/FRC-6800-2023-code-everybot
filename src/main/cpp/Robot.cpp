@@ -9,6 +9,8 @@
 #include <rev/CANSparkMax.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <rev/MotorFeedbackSensor.h>
+#include <frc/PowerDistribution.h>
+#include <networktables/NetworkTableInstance.h>
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
@@ -16,7 +18,6 @@
    std::string kAutoFowrard1 = "Red_Mid";
    std::string kAutoFowrard2 = "Red_Right";
    std::string kAutoFowrard3 = "Red_Left";
-   //work on autos as bumbers will be ready
    std::string kAutoFowrard4 = "Blue_Mid";
    std::string kAutoFowrard5 = "Blue_Right";
    std::string kAutoFowrard6 = "Blue_Left";
@@ -58,14 +59,6 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //CHANGE IDS FOR INTAKE
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
 
-  //Motor controller for arm and intake (Main)
-  //rev::CANSparkMax m_armMotor{1, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for arm
-  //rev::CANSparkMax m_intakeMotor{2, rev::CANSparkMax::MotorType::kBrushless}; // brushless motor for intake
-
-  //Create group if need to combine with something else later
-  //frc::MotorControllerGroup m_armController{m_armMotor};
-  //frc::MotorControllerGroup m_intakeController{m_intakeMotor};
-
   //4 main drive motor cotnrollers
   rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_leftMotor2{5, rev::CANSparkMax::MotorType::kBrushed};
@@ -79,6 +72,8 @@ class Robot : public frc::TimedRobot {
   //Combine both motor groups
   frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
   frc::XboxController controller{0}; 
+  //Operator controller
+  frc::XboxController controllerOP{1};
 
   //Timer for Auto
   frc::Timer m_timer;
@@ -112,34 +107,37 @@ class Robot : public frc::TimedRobot {
     //initial delay is 0 sec
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
 
-    //Need to implement into the driving code
-    frc::SmartDashboard::PutNumber("drive left power (1 = 100%)", 1);
-    frc::SmartDashboard::PutNumber("drive right power (1 = 100%)", 1);
+    //Need to implement into the driving code - LAter
+    //frc::SmartDashboard::PutNumber("drive left power (1 = 100%)", 1);
+    //frc::SmartDashboard::PutNumber("drive right power (1 = 100%)", 1);
 
-    frc::SmartDashboard::PutNumber("Rotation Power", 0.3); //30% to check
+    frc::SmartDashboard::PutNumber("Rotation Power", 0.8); //30% to check
     frc::SmartDashboard::PutNumber("Speed Power", 1);
 
   }
 
   void TeleopPeriodic() override {
-  //----------------------------------------------------------------------------NEED TO TEST----------------------------------------------------------------------
+//---------------------------------------------------VOLTAGE COLLECTOR--------------------------------------------
+    frc::PowerDistribution pdp;
+    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+
+    double voltage = 0;
+
+    voltage = pdp.GetVoltage();
+    frc::SmartDashboard::PutNumber("Voltage", voltage);
+
+//----------------------------------------------------------------------------------------------------------------------
+
+    double m_rot = frc::SmartDashboard::GetNumber("Rotation Power", 0.8);
+    double sens = frc::SmartDashboard::GetNumber("Speed Power", 1);
 
     // Drive the robot forward when the A button is pressed
     // Otherwise, set the motors to zero
     if(controller.GetAButton() > 0){
-        m_robotDrive.ArcadeDrive(0.9, 0);
+      m_robotDrive.TankDrive(0.7, 0.7);
     }else{
-      m_robotDrive.ArcadeDrive(0, 0);
+      m_robotDrive.TankDrive(0, 0);
     }
-
-    double m_rot = frc::SmartDashboard::GetNumber("Rotation Power", 0.3);
-    double sens = frc::SmartDashboard::GetNumber("Speed Power", 1);
-
-    //numbers from shuffleboard that can limit left/right side of motors
-    double m_limitLeft = frc::SmartDashboard::GetNumber("drive left power (1 = 100%)", 1);
-    double m_limitRight = frc::SmartDashboard::GetNumber("drive right power (1 = 100%)", 1);
-
-    //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY();
@@ -151,30 +149,9 @@ class Robot : public frc::TimedRobot {
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
 
 
-    //possible intake code with arm and intake
-    // code to control arm movement using left joystick
-    //m_armController.Set(controller.GetY(frc::XboxController::JoystickHand::kLeftHand));
-    
-    // code to control intake motor with right trigger
-    // m_intakeController.Set(controller.GetTriggerAxis(frc::XboxController::JoystickHand::kRightHand));
+    //INTAKE CODE HERE:
 
-
-    //Intake logic, need to change due to new intake
-    // if (controller.GetLeftTriggerAxis() > 0) {
-    //intake in
-    //     m_leftIntake.Set(-intakeSpeed);
-    //     m_rightIntake.Set(intakeSpeed);
-    // }
-    // else if (controller.GetRightTriggerAxis() > 0) {
-    //intake out
-    //     m_leftIntake.Set(intakeSpeed);
-    //     m_rightIntake.Set(-intakeSpeed);
-    // }
-    // else {
-    //if none, set to 0
-    //     m_leftIntake.Set(0);
-    //     m_rightIntake.Set(0);
-    // }
+    //use left + right triggers (controllerOP)
     
   }
     //*************************************************AUTONOMUS PART BELLOW*************************************************************
