@@ -14,42 +14,18 @@
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
-   std::string kAutoDefault = "NONE";
-   std::string kAutoFowrard1 = "Red_Mid";
-   std::string kAutoFowrard2 = "Red_Right";
-   std::string kAutoFowrard3 = "Red_Left";
-   std::string kAutoFowrard4 = "Blue_Mid";
-   std::string kAutoFowrard5 = "Blue_Right";
-   std::string kAutoFowrard6 = "Blue_Left";
+   const std::string kAutoOptions[] = { "NONE", "Red_Mid", "Red_Right", "Red_Left", "Red_BR" };
 
-  //How many amps the arm motor can use.
+
   static const int ARM_CURRENT_LIMIT_A = 20;
-
-  //Percent output to run the arm up/down at
   static const double ARM_OUTPUT_POWER = 0.4;
-
-  //How many amps the intake can use while picking up
   static const int INTAKE_CURRENT_LIMIT_A = 25;
-
-  //How many amps the intake can use while holding
   static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
-
-  //Percent output for intaking
   static const double INTAKE_OUTPUT_POWER = 1.0;
-
-  //Percent output for holding
   static const double INTAKE_HOLD_POWER = 0.07;
-
-  //Time to extend or retract arm in auto
   static const double ARM_EXTEND_TIME_S = 2.0;
-
-  //Time to throw game piece in auto
   static const double AUTO_THROW_TIME_S = 0.375;
-
-  //Time to drive back in auto
   static const double AUTO_DRIVE_TIME = 6.0;
-
-  //Speed to drive backwards in auto
   static const double AUTO_DRIVE_SPEED = -0.25;
 
 
@@ -93,13 +69,11 @@ class Robot : public frc::TimedRobot {
     m_rightMotors.SetInverted(true);
     
     //list of Auto Options
-    m_chooser.SetDefaultOption("NONE", kAutoDefault);
-    m_chooser.AddOption("Red_Mid", kAutoFowrard1);
-    m_chooser.AddOption("Red_Right", kAutoFowrard2);
-    m_chooser.AddOption("Red_Left", kAutoFowrard3);
-    m_chooser.AddOption("Blue_Mid", kAutoFowrard4);
-    m_chooser.AddOption("Blue_Right", kAutoFowrard5);
-    m_chooser.AddOption("Blue_Left", kAutoFowrard6);
+    m_chooser.SetDefaultOption("NONE", kAutoOptions[0]);
+    m_chooser.AddOption("Red_Mid", kAutoOptions[1]);
+    m_chooser.AddOption("Red_Right", kAutoOptions[2]);
+    m_chooser.AddOption("Red_Left", kAutoOptions[3]);
+    m_chooser.AddOption("Red_BR", kAutoOptions[4]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
@@ -107,11 +81,9 @@ class Robot : public frc::TimedRobot {
     //initial delay is 0 sec
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
 
-    //Need to implement into the driving code - LAter
-    //frc::SmartDashboard::PutNumber("drive left power (1 = 100%)", 1);
-    //frc::SmartDashboard::PutNumber("drive right power (1 = 100%)", 1);
+    //create one more to limit a specific motor
 
-    frc::SmartDashboard::PutNumber("Rotation Power", 0.8); //30% to check
+    frc::SmartDashboard::PutNumber("Rotation Power", 1);
     frc::SmartDashboard::PutNumber("Speed Power", 1);
 
   }
@@ -128,7 +100,8 @@ class Robot : public frc::TimedRobot {
 
 //----------------------------------------------------------------------------------------------------------------------
 
-    double m_rot = frc::SmartDashboard::GetNumber("Rotation Power", 0.8);
+    //limtations on speed and rotation
+    double m_rot = frc::SmartDashboard::GetNumber("Rotation Power", 1);
     double sens = frc::SmartDashboard::GetNumber("Speed Power", 1);
 
     // Drive the robot forward when the A button is pressed
@@ -313,64 +286,64 @@ class Robot : public frc::TimedRobot {
       }
     }
 
-    else if(selectedOption == "Blue_Right"){
-  
-    }
-
-    else if(selectedOption == "Blue_Mid"){
-      //ROBOT MUST FACE THE DRIVER
+    else if(selectedOption == "Red_BR"){
+     //ROBOT MUST FACE THE DRIVER
 
       //What this Auto is doing:
       //1. facing driver it goes a little forward with object and release it
-      //2. turn 180 degrees to the left + forward - slow to get through te bridge
-      //3. get the object in the middle of the field
-      //4. may chose to go both to the left or right.
+      //2. turn 180 degrees to the left + forward until obejct is hit
+      //3. capture the object and turn 180 degrees
+      //4. go back and put the object in different place
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
-      else if(m_timer.Get() < 0.75_s + secondsX){ //0.48 if nothing else is wokring is perfect to turn right 90 degrees
-        m_robotDrive.TankDrive(-0.55, 0.55, false); 
+      else if(m_timer.Get() < 0.2_s + secondsX){
+        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
       }
-      else if(m_timer.Get() < 2_s + secondsX){
-          m_robotDrive.ArcadeDrive(-0.55, 0.0, false); 
+      else if (m_timer.Get() < 0.5_s + secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
       }
-      else if(m_timer.Get() < 2.5_s + secondsX){
+      else if(m_timer.Get() < 1.3_s + secondsX){
+          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 when charge is 100%
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
+      }
+      else if(m_timer.Get() < 1.5_s + secondsX){
+          m_robotDrive.TankDrive(0, 0.0, false);
+      }
+      else if(m_timer.Get() < 3_s + secondsX){
+          m_robotDrive.ArcadeDrive(-0.65, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
+      }
+      else if(m_timer.Get() < 5_s + secondsX){
+          m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
+      }
+      else if(m_timer.Get() < 6_s + secondsX){
+          m_robotDrive.TankDrive(-.8, .8, false); 
+      }
+      else if(m_timer.Get() < 6.1_s + secondsX){
+          m_robotDrive.TankDrive(0, 0, false); 
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
+      }
+      else if(m_timer.Get() < 7.35_s + secondsX){
+          m_robotDrive.ArcadeDrive(-0.75, 0.0, false); 
+      }
+      else if(m_timer.Get() < 8.1_s + secondsX){
           m_robotDrive.ArcadeDrive(0, 0.0, false); 
+          m_leftIntake.Set(intakeSpeed);
+          m_rightIntake.Set(-intakeSpeed);
       }
-      else if(m_timer.Get() < 3.2_s + secondsX){ 
-        m_robotDrive.TankDrive(0.65, -0.65, false); 
-      }
-      else if(m_timer.Get() < 3.6_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(0, 0, false);
-      }
-      else if(m_timer.Get() < 4.4_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(-.9, 0, false);
-      }
-      else if(m_timer.Get() < 5.65_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(0, 0, false);
-      }
-      else if(m_timer.Get() < 6.7_s + secondsX){ 
-        m_robotDrive.TankDrive(-0.6, 0.6, false); 
-      }
-      else if(m_timer.Get() < 7_s + secondsX){ 
-        m_robotDrive.TankDrive(0, 0, false); 
-      }
-      else if(m_timer.Get() < 9_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(-.5, 0, false); 
-      }
-      else if(m_timer.Get() < 10_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(0, 0, false); 
-      }
-      else if(m_timer.Get() < 10.75_s + secondsX){ 
-        m_robotDrive.TankDrive(-0.6, 0.6, false); 
+      else if(m_timer.Get() < 9.1_s + secondsX){
+          m_leftIntake.Set(0);
+          m_rightIntake.Set(0);
       }
       else if(m_timer.Get() < 15_s + secondsX){
-        m_robotDrive.ArcadeDrive(0, 0, false); 
+          m_robotDrive.TankDrive(0, 0.0, false);
       }
-    }
-
-    else if(selectedOption == "Blue_Left"){
-      
     }
   }
 };
