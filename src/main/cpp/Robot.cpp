@@ -14,7 +14,7 @@
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
-   const std::string kAutoOptions[] = { "NONE", "Red_Mid", "Red_Right", "Red_Left", "Red_left_BR", "Red_left_PushGo"};
+   const std::string kAutoOptions[] = { "NONE", "Red_Mid", "Red_left_BR", "Red_left_PushGo", "Red_right_BR"};
 
 
   static const int ARM_CURRENT_LIMIT_A = 20;
@@ -71,10 +71,9 @@ class Robot : public frc::TimedRobot {
     //list of Auto Options
     m_chooser.SetDefaultOption("NONE", kAutoOptions[0]);
     m_chooser.AddOption("Red_Mid", kAutoOptions[1]);
-    m_chooser.AddOption("Red_Right", kAutoOptions[2]);
-    m_chooser.AddOption("Red_Left", kAutoOptions[3]);
-    m_chooser.AddOption("Red_left_BR", kAutoOptions[4]);
-    m_chooser.AddOption("Red_left_PushGo", kAutoOptions[5]);
+    m_chooser.AddOption("Red_left_BR", kAutoOptions[2]);
+    m_chooser.AddOption("Red_left_PushGo", kAutoOptions[3]);
+    m_chooser.AddOption("Red_right_BR", kAutoOptions[4]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
@@ -84,9 +83,11 @@ class Robot : public frc::TimedRobot {
 
     //create one more to limit a specific motor
 
-    frc::SmartDashboard::PutNumber("Rotation Power", 1);
-    frc::SmartDashboard::PutNumber("Speed Power", 1);
+    frc::SmartDashboard::PutNumber("Rotation Sesitivity", 1);
+    frc::SmartDashboard::PutNumber("Speed Sesitivity", 1);
 
+    frc::SmartDashboard::PutNumber("Left Motor Limit", 100); //initially 100%
+    frc::SmartDashboard::PutNumber("Right Motor Limit", 100);
   }
 
   void TeleopPeriodic() override {
@@ -103,8 +104,16 @@ class Robot : public frc::TimedRobot {
 //----------------------------------------------------------------------------------------------------------------------
 
     //limtations on speed and rotation
-    double m_rot = frc::SmartDashboard::GetNumber("Rotation Power", 1);
-    double sens = frc::SmartDashboard::GetNumber("Speed Power", 1);
+    double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 1);
+    double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 1);
+
+    double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 100);
+    double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 100);
+
+    m_leftMotor1.SetSmartCurrentLimit(sensLeft);
+    m_leftMotor2.SetSmartCurrentLimit(sensLeft);
+    m_rightMotor1.SetSmartCurrentLimit(sensRight);
+    m_rightMotor2.SetSmartCurrentLimit(sensRight);
 
     // Drive the robot forward when the A button is pressed
     // Otherwise, set the motors to zero
@@ -118,7 +127,8 @@ class Robot : public frc::TimedRobot {
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
 
-    m_robotDrive.ArcadeDrive(speed * sens, rotation * m_rot);
+
+    m_robotDrive.ArcadeDrive(speed * Totsens, rotation * m_rot);
 
     //initial speed of the intake will be 40%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
@@ -145,38 +155,7 @@ class Robot : public frc::TimedRobot {
     units::unit_t<units::time::second, double, units::linear_scale> secondsX(x);
 
 
-    if (selectedOption == "Red_Left") {
-      //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing:
-      //1. facing driver it goes a little forward with object and release it
-      //2. turn 90 degrees to the left + forward for a few meters
-      //3. turn left again facing the bridge
-      //4. getting up to the bridge with lower speed 
-      if(m_timer.Get() < secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-      }
-      else if(m_timer.Get() < 0.2_s + secondsX){ //+0.75s is perfect time to turn 90 degrees
-        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-      }
-      else if (m_timer.Get() < 0.85_s + secondsX){
-        m_robotDrive.TankDrive(0.7, -0.7, false);
-      }
-      else if (m_timer.Get() < 1.85_s + secondsX){
-        m_robotDrive.ArcadeDrive(-0.5, 0, false);
-      }
-      else if (m_timer.Get() < 2.3_s + secondsX){
-        m_robotDrive.TankDrive(0.72, -0.72, false);
-      }
-      else if (m_timer.Get() < 3.7_s + secondsX){
-        m_robotDrive.ArcadeDrive(-0.3, 0, false);
-      }
-      else if(m_timer.Get() < 15_s + secondsX){
-        m_robotDrive.ArcadeDrive(0, 0, false); 
-      }
-    }
-
-    else if(selectedOption == "Red_Mid"){
+    if(selectedOption == "Red_Mid"){
       //ROBOT MUST FACE THE DRIVER
 
       //What this Auto is doing:
@@ -228,78 +207,18 @@ class Robot : public frc::TimedRobot {
       }
     }
 
-    else if(selectedOption == "Red_Right"){
-      //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing:
-      //1. facing driver it goes a little forward with object and release it
-      //2. turn 180 degrees to the left + forward until obejct is hit
-      //3. capture the object and turn 180 degrees
-      //4. go back and put the object in different place
-      if(m_timer.Get() < secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-      }
-      else if(m_timer.Get() < 0.2_s + secondsX){
-        m_robotDrive.ArcadeDrive(-0.6, 0.0, false); 
-      }
-      else if (m_timer.Get() < 0.5_s + secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
-          m_leftIntake.Set(intakeSpeed);
-          m_rightIntake.Set(-intakeSpeed);
-      }
-      else if(m_timer.Get() < 1.3_s + secondsX){
-          m_robotDrive.TankDrive(-.9, .9, false); //worked on 0.76 when charge is 100%
-          m_leftIntake.Set(0);
-          m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 1.5_s + secondsX){
-          m_robotDrive.TankDrive(0, 0.0, false);
-      }
-      else if(m_timer.Get() < 3_s + secondsX){
-          m_robotDrive.ArcadeDrive(-0.65, 0.0, false); 
-          m_leftIntake.Set(intakeSpeed);
-          m_rightIntake.Set(-intakeSpeed);
-      }
-      else if(m_timer.Get() < 5_s + secondsX){
-          m_robotDrive.ArcadeDrive(0.0, 0.0, false); 
-      }
-      else if(m_timer.Get() < 6_s + secondsX){
-          m_robotDrive.TankDrive(-.8, .8, false); 
-      }
-      else if(m_timer.Get() < 6.1_s + secondsX){
-          m_robotDrive.TankDrive(0, 0, false); 
-          m_leftIntake.Set(0);
-          m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 7.35_s + secondsX){
-          m_robotDrive.ArcadeDrive(-0.75, 0.0, false); 
-      }
-      else if(m_timer.Get() < 8.1_s + secondsX){
-          m_robotDrive.ArcadeDrive(0, 0.0, false); 
-          m_leftIntake.Set(intakeSpeed);
-          m_rightIntake.Set(-intakeSpeed);
-      }
-      else if(m_timer.Get() < 9.1_s + secondsX){
-          m_leftIntake.Set(0);
-          m_rightIntake.Set(0);
-      }
-      else if(m_timer.Get() < 15_s + secondsX){
-          m_robotDrive.TankDrive(0, 0.0, false);
-      }
-    }
-
     else if(selectedOption == "Red_left_BR"){
      //ROBOT MUST FACE THE DRIVER
 
       //What this Auto is doing(TankDrive ONLY):
-      // PERFECT VOLTAGE - 12.4 - 12.5
+
       //1. facing driver it goes a little forward with object and release it
       //2. going backwards
       //3. tiurn left - 90 degrees
       //4. A little forward
       //5. turn right - 90 degrees
       //6. jump onto the bridge
-      if(m_timer.Get() < secondsX){
+      if(m_timer.Get() < secondsX){                     // PERFECT VOLTAGE - 12.3 - 12.5
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
       else if(m_timer.Get() < 0.15_s + secondsX){
@@ -333,8 +252,34 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.TankDrive(0, 0, false); 
       }
     }
+
     else if(selectedOption == "Red_left_PushGo"){
       if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+      else if(m_timer.Get() < 0.15_s + secondsX){
+        m_robotDrive.TankDrive(-0.6, -0.6, false); 
+      }
+      else if(m_timer.Get() < 1.5_s + secondsX){
+        m_robotDrive.TankDrive(0.9, 0.9, false); 
+      }
+      else if(m_timer.Get() < 1.7_s + secondsX){
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+    }
+
+    else if(selectedOption == "Red_right_BR"){
+      //ROBOT MUST FACE THE DRIVER
+
+      //What this Auto is doing(TankDrive ONLY):
+
+      //1. facing driver it goes a little forward with object and release it
+      //2. going backwards
+      //3. tiurn left - 90 degrees
+      //4. A little forward
+      //5. turn right - 90 degrees
+      //6. jump onto the bridge
+      if(m_timer.Get() < secondsX){                     // PERFECT VOLTAGE - 12.3 - 12.5
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
       else if(m_timer.Get() < 0.15_s + secondsX){
@@ -344,6 +289,27 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.TankDrive(0.9, 0.9, false);  //this is going between 0.15 and 1.2
       }
       else if(m_timer.Get() < 1.7_s + secondsX){
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 2_s + secondsX){
+        m_robotDrive.TankDrive(-0.65, 0.65, false); 
+      }
+      else if(m_timer.Get() < 2.6_s + secondsX){ //0.3sec to turn 90 degrees with speed 0.62
+        m_robotDrive.TankDrive(-0.6, -0.6, false); 
+      }
+      else if(m_timer.Get() < 3.1_s + secondsX){
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 3.4_s + secondsX){
+        m_robotDrive.TankDrive(-0.57, 0.57, false); 
+      }
+      else if(m_timer.Get() < 4.65_s + secondsX){
+        m_robotDrive.TankDrive(-0.8, -0.8, false); 
+      }
+      else if(m_timer.Get() < 4.7_s + secondsX){
+        m_robotDrive.TankDrive(0.8, 0.8, false); 
+      }
+      else if(m_timer.Get() < 6_s + secondsX){
         m_robotDrive.TankDrive(0, 0, false); 
       }
     }
