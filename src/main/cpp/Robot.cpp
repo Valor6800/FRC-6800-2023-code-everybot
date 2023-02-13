@@ -110,6 +110,7 @@ class Robot : public frc::TimedRobot {
     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 100);
     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 100);
 
+    //TEST
     m_leftMotor1.SetSmartCurrentLimit(sensLeft);
     m_leftMotor2.SetSmartCurrentLimit(sensLeft);
     m_rightMotor1.SetSmartCurrentLimit(sensRight);
@@ -301,7 +302,7 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.TankDrive(0, 0, false); 
       }
       else if(m_timer.Get() < 3.4_s + secondsX){
-        m_robotDrive.TankDrive(-0.57, 0.57, false); 
+        m_robotDrive.TankDrive(0.57, -0.57, false); 
       }
       else if(m_timer.Get() < 4.65_s + secondsX){
         m_robotDrive.TankDrive(-0.8, -0.8, false); 
