@@ -110,7 +110,7 @@ class Robot : public frc::TimedRobot {
     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 100);
     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 100);
 
-    //TEST
+                                                  //TEST
     m_leftMotor1.SetSmartCurrentLimit(sensLeft);
     m_leftMotor2.SetSmartCurrentLimit(sensLeft);
     m_rightMotor1.SetSmartCurrentLimit(sensRight);
@@ -161,7 +161,7 @@ class Robot : public frc::TimedRobot {
 
       //What this Auto is doing:
       //1. facing driver it goes a little forward with object and release it
-      //2. turn 180 degrees to the left + forward - slow to get through te bridge
+      //2. goes back through the bridge
       //3. get the object in the middle of the field
       //4. may chose to go both to the left or right.
       if(m_timer.Get() < secondsX){
