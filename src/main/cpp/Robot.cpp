@@ -14,7 +14,7 @@
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
-   const std::string kAutoOptions[] = { "NONE", "Red_Mid", "Red_left_BR", "Red_left_PushGo", "Red_right_BR"};
+   const std::string kAutoOptions[] = { "NONE", "Red_Mid_BR", "Red_left_BR", "Red_left_PushGo", "Red_right_BR", "Red_Mid_ScoreTwo"};
 
 
   static const int ARM_CURRENT_LIMIT_A = 20;
@@ -70,10 +70,11 @@ class Robot : public frc::TimedRobot {
     
     //list of Auto Options
     m_chooser.SetDefaultOption("NONE", kAutoOptions[0]);
-    m_chooser.AddOption("Red_Mid", kAutoOptions[1]);
+    m_chooser.AddOption("Red_Mid_BR", kAutoOptions[1]);
     m_chooser.AddOption("Red_left_BR", kAutoOptions[2]);
     m_chooser.AddOption("Red_left_PushGo", kAutoOptions[3]);
     m_chooser.AddOption("Red_right_BR", kAutoOptions[4]);
+    m_chooser.AddOption("Red_Mid_ScoreTwo", kAutoOptions[5]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
@@ -86,7 +87,7 @@ class Robot : public frc::TimedRobot {
     frc::SmartDashboard::PutNumber("Rotation Sesitivity", 1);
     frc::SmartDashboard::PutNumber("Speed Sesitivity", 1);
 
-    frc::SmartDashboard::PutNumber("Left Motor Limit", 100); //initially 100%
+    frc::SmartDashboard::PutNumber("Left Motor Limit", 65); //initially 100%
     frc::SmartDashboard::PutNumber("Right Motor Limit", 100);
   }
 
@@ -104,13 +105,12 @@ class Robot : public frc::TimedRobot {
 //----------------------------------------------------------------------------------------------------------------------
 
     //limtations on speed and rotation
-    double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 1);
-    double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 1);
+    double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 0.7);
+    double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 0.7);
 
-    double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 100);
+    double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 65); //65%?
     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 100);
 
-                                                  //TEST
     m_leftMotor1.SetSmartCurrentLimit(sensLeft);
     m_leftMotor2.SetSmartCurrentLimit(sensLeft);
     m_rightMotor1.SetSmartCurrentLimit(sensRight);
@@ -156,55 +156,50 @@ class Robot : public frc::TimedRobot {
     units::unit_t<units::time::second, double, units::linear_scale> secondsX(x);
 
 
-    if(selectedOption == "Red_Mid"){
-      //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing:
-      //1. facing driver it goes a little forward with object and release it
-      //2. goes back through the bridge
-      //3. get the object in the middle of the field
-      //4. may chose to go both to the left or right.
+    if(selectedOption == "Red_Mid_BR"){
+      //MUST FACE THE DRIVER
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
-      else if(m_timer.Get() < 0.75_s + secondsX){ //0.48 if nothing else is wokring is perfect to turn right 90 degrees
-        m_robotDrive.TankDrive(-0.55, 0.55, false); 
+      else if(m_timer.Get() < 0.15_s + secondsX){
+        m_robotDrive.TankDrive(0.6, 0.6, false); 
       }
-      else if(m_timer.Get() < 2_s + secondsX){
-          m_robotDrive.ArcadeDrive(-0.55, 0.0, false); 
+      else if(m_timer.Get() < 1.3_s + secondsX){
+        m_robotDrive.TankDrive(-0.7, -0.7, false); //initially 0.9 
       }
-      else if(m_timer.Get() < 2.5_s + secondsX){
-          m_robotDrive.ArcadeDrive(0, 0.0, false); 
+      else if(m_timer.Get() < 1.35_s + secondsX){
+        m_robotDrive.TankDrive(0.8, 0.8, false); 
       }
-      else if(m_timer.Get() < 3.2_s + secondsX){ 
-        m_robotDrive.TankDrive(0.65, -0.65, false); 
-      }
-      else if(m_timer.Get() < 3.6_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(0, 0, false);
-      }
-      else if(m_timer.Get() < 4.4_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(-.9, 0, false);
-      }
-      else if(m_timer.Get() < 5.65_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(0, 0, false);
-      }
-      else if(m_timer.Get() < 6.7_s + secondsX){ 
-        m_robotDrive.TankDrive(-0.6, 0.6, false); 
-      }
-      else if(m_timer.Get() < 7_s + secondsX){ 
+      else if(m_timer.Get() < 1.7_s + secondsX){
         m_robotDrive.TankDrive(0, 0, false); 
       }
-      else if(m_timer.Get() < 9_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(-.5, 0, false); 
+    }
+
+    else if(selectedOption == "Red_Mid_ScoreTwo"){
+      //MUST FACE THE DRIVER
+      if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
-      else if(m_timer.Get() < 10_s + secondsX){ 
-        m_robotDrive.ArcadeDrive(0, 0, false); 
+      else if(m_timer.Get() < 0.15_s + secondsX){
+        m_robotDrive.TankDrive(0.6, 0.6, false); 
       }
-      else if(m_timer.Get() < 10.75_s + secondsX){ 
-        m_robotDrive.TankDrive(-0.6, 0.6, false); 
+      else if(m_timer.Get() < 1.3_s + secondsX){
+        m_robotDrive.TankDrive(-0.53, -0.53, false); 
+      }
+      else if(m_timer.Get() < 1.35_s + secondsX){
+        m_robotDrive.TankDrive(0.8, 0.8, false); 
+      }
+      else if(m_timer.Get() < 1.7_s + secondsX){
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+      else if(m_timer.Get() < 3.3_s + secondsX){
+        m_robotDrive.TankDrive(-0.3, -0.3, false); 
+      }
+      else if(m_timer.Get() < 3.9_s + secondsX){
+        m_robotDrive.TankDrive(-0.6, -0.6, false);
       }
       else if(m_timer.Get() < 15_s + secondsX){
-        m_robotDrive.ArcadeDrive(0, 0, false); 
+        m_robotDrive.TankDrive(0, 0, false);
       }
     }
 
@@ -293,7 +288,7 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.TankDrive(0, 0, false); 
       }
       else if(m_timer.Get() < 2_s + secondsX){
-        m_robotDrive.TankDrive(-0.65, 0.65, false); 
+        m_robotDrive.TankDrive(-0.7, 0.7, false);  //initially 0.65
       }
       else if(m_timer.Get() < 2.6_s + secondsX){ //0.3sec to turn 90 degrees with speed 0.62
         m_robotDrive.TankDrive(-0.6, -0.6, false); 
