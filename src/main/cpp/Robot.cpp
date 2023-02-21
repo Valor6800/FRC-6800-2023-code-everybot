@@ -115,6 +115,11 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.SetSmartCurrentLimit(sensLeft);
     m_rightMotor1.SetSmartCurrentLimit(sensRight);
     m_rightMotor2.SetSmartCurrentLimit(sensRight);
+    m_leftMotor1.EnableVoltageCompensation(12.3);
+    m_leftMotor2.EnableVoltageCompensation(12.3);
+    m_rightMotor1.EnableVoltageCompensation(12.3);
+    m_rightMotor2.EnableVoltageCompensation(12.3);
+    //add one more for intake
 
     // Drive the robot forward when the A button is pressed
     // Otherwise, set the motors to zero
