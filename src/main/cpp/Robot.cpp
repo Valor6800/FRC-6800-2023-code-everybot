@@ -14,7 +14,7 @@
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
-   const std::string kAutoOptions[] = { "NONE", "Red_Mid_BR", "Red_left_BR", "Red_left_PushGo", "Red_right_BR", "Red_Mid_ScoreTwo"};
+   const std::string kAutoOptions[] = { "NONE", "Red_Mid_BR", "Red_left_BR", "Red_left_PushGo", "Red_right_BR", "Red_Mid_ScoreTwo", "Red_right_PushGo", "Blue_Mid_BR", "Blue_left_BR", "Blue_left_PushGo", "Blue_right_BR", "Blue_Mid_ScoreTwo", "Blue_right_PushGo"};
 
 
   static const int ARM_CURRENT_LIMIT_A = 20;
@@ -75,6 +75,13 @@ class Robot : public frc::TimedRobot {
     m_chooser.AddOption("Red_left_PushGo", kAutoOptions[3]);
     m_chooser.AddOption("Red_right_BR", kAutoOptions[4]);
     m_chooser.AddOption("Red_Mid_ScoreTwo", kAutoOptions[5]);
+    m_chooser.AddOption("Red_right_PushGo", kAutoOptions[6]);
+    m_chooser.AddOption("Blue_Mid_BR", kAutoOptions[7]);
+    m_chooser.AddOption("Blue_left_BR", kAutoOptions[8]);
+    m_chooser.AddOption("Blue_left_PushGo", kAutoOptions[9]);
+    m_chooser.AddOption("Blue_right_BR", kAutoOptions[10]);
+    m_chooser.AddOption("Blue_Mid_ScoreTwo", kAutoOptions[11]);
+    m_chooser.AddOption("Blue_right_PushGo", kAutoOptions[12]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //give a 0 as initial number for intake speed
@@ -124,10 +131,12 @@ class Robot : public frc::TimedRobot {
     // Drive the robot forward when the A button is pressed
     // Otherwise, set the motors to zero
     if(controller.GetAButton() > 0){
-      m_robotDrive.TankDrive(0.7, 0.7);
+     m_robotDrive.TankDrive(0.7, 0.7);
     }else{
       m_robotDrive.TankDrive(0, 0);
     }
+
+    
 
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY();
