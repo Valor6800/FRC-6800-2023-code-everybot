@@ -193,7 +193,7 @@ class Robot : public frc::TimedRobot {
       }
     }
     
-    else if(selectedOption == "Blue_left_BR"){
+    else if(selectedOption == "Blue_mid_BR"){
       //MUST FACE THE DRIVER
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
