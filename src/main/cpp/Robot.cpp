@@ -192,6 +192,25 @@ class Robot : public frc::TimedRobot {
         m_robotDrive.TankDrive(0, 0, false); 
       }
     }
+    
+    else if(selectedOption == "Blue_left_BR"){
+      //MUST FACE THE DRIVER
+      if(m_timer.Get() < secondsX){
+        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+      }
+      else if(m_timer.Get() < 0.15_s + secondsX){
+        m_robotDrive.TankDrive(0.6, 0.6, false); 
+      }
+      else if(m_timer.Get() < 1.3_s + secondsX){
+        m_robotDrive.TankDrive(-0.7, -0.7, false); //initially 0.9 
+      }
+      else if(m_timer.Get() < 1.35_s + secondsX){
+        m_robotDrive.TankDrive(0.8, 0.8, false); 
+      }
+      else if(m_timer.Get() < 1.7_s + secondsX){
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
+    }
 
     else if(selectedOption == "Red_Mid_ScoreTwo"){
       //MUST FACE THE DRIVER
