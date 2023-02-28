@@ -31,8 +31,12 @@
 
 class Robot : public frc::TimedRobot {
 
-  //LEFT + RIGHT INTAKE (Replace with new motor controllers)
+  //Replace/DELETE
   rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //CHANGE IDS FOR INTAKE
+  rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
+  
+  //Motorcontroller for intake (1 for arm, 1 for intake itself)
+  rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
 
   //4 main drive motor cotnrollers
