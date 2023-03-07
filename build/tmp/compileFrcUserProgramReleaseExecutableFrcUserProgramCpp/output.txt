@@ -1,12 +1,8 @@
 See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
-compiling Robot.cpp successful.
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::TeleopPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:135:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  135 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
-      |            ^~~~~~~~~~~
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::AutonomousPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:153:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  153 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
-      |            ^~~~~~~~~~~
+compiling Robot.cpp failed.
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:13:10: fatal error: frc/PowerDistributionPanel.h: No such file or directory
+   13 | #include <frc/PowerDistributionPanel.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
 
 Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.

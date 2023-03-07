@@ -31,13 +31,9 @@
 
 class Robot : public frc::TimedRobot {
 
-  //Replace/DELETE
-  rev::CANSparkMax m_rightIntake{11, rev::CANSparkMax::MotorType::kBrushed}; //CHANGE IDS FOR INTAKE
-  rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
-  
   //Motorcontroller for intake (1 for arm, 1 for intake itself)
-  rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
-  rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
+  //rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
+  //rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
 
   //4 main drive motor cotnrollers
   rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
@@ -62,8 +58,6 @@ class Robot : public frc::TimedRobot {
   void RobotInit() override {
     //reset all motors before start
     //need to add more as intake is developed
-    m_leftIntake.RestoreFactoryDefaults();
-    m_rightIntake.RestoreFactoryDefaults();
     m_leftMotor1.RestoreFactoryDefaults();
     m_leftMotor2.RestoreFactoryDefaults();
     m_rightMotor1.RestoreFactoryDefaults();
@@ -104,15 +98,14 @@ class Robot : public frc::TimedRobot {
 
   void TeleopPeriodic() override {
 //---------------------------------------------------VOLTAGE COLLECTOR--------------------------------------------
- /*
-    frc::PowerDistribution pdp;
-    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+ 
+  // Create a PowerDistributionPanel object
+  frc::PowerDistribution pdp;
 
-    double voltage = 0;
+  // In your periodic function, get the battery voltage and send it to SmartDashboard
+  double voltage = pdp.GetVoltage();
+  frc::SmartDashboard::PutNumber("Battery Voltage", voltage);
 
-    voltage = pdp.GetVoltage();
-    frc::SmartDashboard::PutNumber("Voltage", voltage);
-*/
 //----------------------------------------------------------------------------------------------------------------------
 
     //limtations on speed and rotation
