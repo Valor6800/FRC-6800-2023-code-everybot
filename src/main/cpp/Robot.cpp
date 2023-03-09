@@ -1,3 +1,5 @@
+//#include "Robot.h"
+
 #include "frc/XboxController.h"
 #include <frc/TimedRobot.h>
 #include <frc/RobotState.h>
@@ -11,6 +13,10 @@
 #include <rev/MotorFeedbackSensor.h>
 #include <frc/PowerDistribution.h>
 #include <networktables/NetworkTableInstance.h>
+
+#include <iostream>
+
+
 
   //auto options
    frc::SendableChooser<std::string> m_chooser;
@@ -31,10 +37,6 @@
 
 class Robot : public frc::TimedRobot {
 
-  //Motorcontroller for intake (1 for arm, 1 for intake itself)
-  //rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
-  //rev::CANSparkMax m_leftIntake{2, rev::CANSparkMax::MotorType::kBrushed};
-
   //4 main drive motor cotnrollers
   rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_leftMotor2{5, rev::CANSparkMax::MotorType::kBrushed};
@@ -47,6 +49,8 @@ class Robot : public frc::TimedRobot {
 
   //Combine both motor groups
   frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
+
+  //Controller for driver
   frc::XboxController controller{0}; 
   //Operator controller
   frc::XboxController controllerOP{1};
@@ -94,19 +98,19 @@ class Robot : public frc::TimedRobot {
 
     frc::SmartDashboard::PutNumber("Left Motor Limit", 65); //initially 100%
     frc::SmartDashboard::PutNumber("Right Motor Limit", 100);
-  }
 
-  void TeleopPeriodic() override {
-//---------------------------------------------------VOLTAGE COLLECTOR--------------------------------------------
- 
-  // Create a PowerDistributionPanel object
+    // Create a PowerDistributionPanel object
   frc::PowerDistribution pdp;
 
   // In your periodic function, get the battery voltage and send it to SmartDashboard
   double voltage = pdp.GetVoltage();
+
   frc::SmartDashboard::PutNumber("Battery Voltage", voltage);
 
-//----------------------------------------------------------------------------------------------------------------------
+
+  }
+
+  void TeleopPeriodic() override {
 
     //limtations on speed and rotation
     double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 0.7);
@@ -126,7 +130,6 @@ class Robot : public frc::TimedRobot {
     //add one more for intake
 
     // Drive the robot forward when the A button is pressed
-    // Otherwise, set the motors to zero
     if(controller.GetAButton() > 0){
      m_robotDrive.TankDrive(0.7, 0.7);
     }else{
