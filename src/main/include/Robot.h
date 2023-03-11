@@ -1,25 +1,16 @@
 #pragma once
-#include <frc/TimedRobot.h>
-#include <frc2/command/Command.h>
-#include <frc/DataLogManager.h>
-#include <RobotContainer.h>
-#include <wpi/DataLog.h>
+#include "RobotContainer.h"
 
-class Robot : public frc::TimedRobot {
-public:
+static const int ARM_CURRENT_LIMIT_A = 20;
+static const double ARM_OUTPUT_POWER = 0.4;
+static const int INTAKE_CURRENT_LIMIT_A = 25;
+static const int INTAKE_HOLD_CURRENT_LIMIT_A = 5;
+static const double INTAKE_OUTPUT_POWER = 1.0;
+static const double INTAKE_HOLD_POWER = 0.07;
+static const double ARM_EXTEND_TIME_S = 2.0;
+static const double AUTO_THROW_TIME_S = 0.375;
+static const double AUTO_DRIVE_TIME = 6.0;
+static const double AUTO_DRIVE_SPEED = -0.25;
 
-	void RobotInit() override;
-	void RobotPeriodic() override;
-	void DisabledInit() override;
-	void DisabledPeriodic() override;
-	void AutonomousInit() override;
-	void AutonomousPeriodic() override;
-	void TeleopInit() override;
-	void TeleopPeriodic() override;
-	void TestPeriodic() override;
-
-private:
-    // The robot's subsystems and commands are defined here...
-    frc2::Command* m_autonomousCommand = nullptr;
-    frc::DataLogManager m_dataLogManager;
-};
+// Create a PowerDistributionPanel object
+frc::PowerDistribution pdp;
