@@ -1,8 +1,6 @@
 #include "Robot.h"
 #include "RobotContainer.h"
 
-
-
   //auto options
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoOptions[] = { "NONE", "Red_Mid_BR", "Red_left_BR", "Red_left_PushGo", "Red_right_BR", "Red_Mid_ScoreTwo", "Red_right_PushGo", "Blue_Mid_BR", "Blue_left_BR", "Blue_left_PushGo", "Blue_right_BR", "Blue_Mid_ScoreTwo", "Blue_right_PushGo"};
@@ -17,15 +15,16 @@ class Robot : public frc::TimedRobot {
     rev::CANSparkMax m_rightMotor1{4, rev::CANSparkMax::MotorType::kBrushed};
     rev::CANSparkMax m_rightMotor2{1, rev::CANSparkMax::MotorType::kBrushed};
 
-    //create a MotorControllerGroup to combine all left and right motors
+    //combine left + right motors
     frc::MotorControllerGroup m_leftMotors{m_leftMotor1, m_leftMotor2};
     frc::MotorControllerGroup m_rightMotors{m_rightMotor1, m_rightMotor2};
 
     //Combine both motor groups
     frc::DifferentialDrive m_robotDrive{m_leftMotors, m_rightMotors};
 
-    //intake motor controller (Keep brushless)
+    //Intake + arm controllers
     rev::CANSparkMax m_intake{3, rev::CANSparkMax::MotorType::kBrushless};
+    rev::CANSparkMax m_arm{8, rev::CANSparkMax::MotorType::kBrushless};
 
     //Controller for driver
     frc::XboxController controller{0}; 
@@ -35,12 +34,16 @@ class Robot : public frc::TimedRobot {
     //Timer for Auto
     frc::Timer m_timer;
 
+    bool coneInt = true;
+    
+    
  public:
   void RobotInit() override {
+
     //right motor must be inverted for it to go forward
     m_rightMotors.SetInverted(true);
     //reset the intake settings to default
-    m_intake.BurnFlash();
+    
 
     //reset all motors before start
     //need to add more as intake is developed
@@ -65,22 +68,34 @@ class Robot : public frc::TimedRobot {
     m_chooser.AddOption("Blue_right_PushGo", kAutoOptions[12]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-    //give a 0 as initial number for intake speed
-    frc::SmartDashboard::PutNumber("Intake Speed", 0.4);
+    //intake + arm speed
+    frc::SmartDashboard::PutNumber("Intake Speed", 0.8);
+    frc::SmartDashboard::PutNumber("Arm Speed", 1);
+
     //initial delay is 0 sec
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
 
-    //create one more to limit a specific motor
+    //limintation of speed and rotation sensitivity
     frc::SmartDashboard::PutNumber("Rotation Sesitivity", 1);
     frc::SmartDashboard::PutNumber("Speed Sesitivity", 1);
 
-    frc::SmartDashboard::PutNumber("Left Motor Limit", 0.35); //initially 65%
+    //boolean to determine if we picking up a code - initially false
+    frc::SmartDashboard::PutBoolean("Cone", false);
+
+    frc::SmartDashboard::PutNumber("Left Motor Limit", 1); //initially 65%
     frc::SmartDashboard::PutNumber("Right Motor Limit", 1);
     
     // In your periodic function, get the battery voltage and send it to SmartDashboard
     //double voltage = pdp.GetVoltage();
     //frc::SmartDashboard::PutNumber("Battery Voltage", voltage);
 
+    //limit motors to a specific voltage
+    m_leftMotor1.EnableVoltageCompensation(12.3);
+    m_leftMotor2.EnableVoltageCompensation(12.3);
+    m_rightMotor1.EnableVoltageCompensation(12.3);
+    m_rightMotor2.EnableVoltageCompensation(12.3);
+
+    frc::SmartDashboard::PutNumber("foward tick", 0);
   }
 
   void TeleopPeriodic() override {
@@ -89,22 +104,15 @@ class Robot : public frc::TimedRobot {
     double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 0.8);
     double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 0.8);
 
-    double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 0.35); //65%?
-    double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
+    //numbers to limit both motor's capacity
+     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%?
+     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
 
-    //initial speed of the intake will be 40%
-    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
+    //initial speed of the intake will be 80% + arm 100%
+    double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.8);
+    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 1);
 
-    //Not limiting to min impact on the motors                                                                                                                                                      TODO - fix it
-    m_leftMotor1.SetSmartCurrentLimit(sensLeft);
-    m_leftMotor2.SetSmartCurrentLimit(sensLeft);
-    m_rightMotor1.SetSmartCurrentLimit(sensRight);
-    m_rightMotor2.SetSmartCurrentLimit(sensRight);
-    m_leftMotor1.EnableVoltageCompensation(12.3);
-    m_leftMotor2.EnableVoltageCompensation(12.3);
-    m_rightMotor1.EnableVoltageCompensation(12.3);
-    m_rightMotor2.EnableVoltageCompensation(12.3);
-    //add one more for intake later
+
 
     //--------------------------------------DRIVE CODE HERE:--------------------------------------------
     //IMPORTANT: when mototr is - its going forward, and when its + its going backward (Its wierd but important for the auto)
@@ -112,8 +120,6 @@ class Robot : public frc::TimedRobot {
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY();
     double rotation = controller.GetRightX();
-    //check if this works
-    m_intake.Set(0.0);
 
     //main drive function 
     m_robotDrive.ArcadeDrive(speed * Totsens, rotation * m_rot);
@@ -125,16 +131,44 @@ class Robot : public frc::TimedRobot {
        m_robotDrive.ArcadeDrive(speed * Totsens, rotation * m_rot);
      }
 
-    //INTAKE CODE HERE:
-
+    //-------------------------------------INTAKE CODE HERE:-----------------------------------------------
+    //TODO cgange it to make it easier to understand and adapt to
+    if (controller.GetYButtonReleased()){coneInt = false;} else { coneInt = true;}
+    frc::SmartDashboard::PutBoolean("Cone", coneInt);
+    
     //use controllerOP for the second controller
     //TODO move it to controllerOP + modify as needed
-     if(controller.GetAButton() > 0){
-       m_intake.Set(1);
+     if(controller.GetLeftTriggerAxis() != 0){
+       if (coneInt){
+        m_intake.Set(-intakeSpeed); //may need to manually change the values
+       } else{
+        m_intake.Set(intakeSpeed);
+       }
+       
+     }
+     else if (controller.GetRightTriggerAxis() != 0) {
+      if (coneInt){
+        m_intake.Set(intakeSpeed);
+       } else{
+        m_intake.Set(-intakeSpeed);
+       }
      }
      else{
        m_intake.Set(0.0);
      }
+
+     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
+    m_arm.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, 0);
+    //m_arm.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, 0);
+   // frc::SmartDashboard::PutNumber("foward tick", e_arm.GetPosition());
+    if(controller.GetXButton()){
+      m_arm.Set(0.6);
+    }else if(controller.GetBButton()){
+      m_arm.Set(-0.6);
+      // m_arm.GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42).SetPosition()
+    }else{
+      m_arm.Set(0.0);
+    }
   }
     //*************************************************AUTONOMUS CODE BELLOW*************************************************************
   void AutonomousInit() override {
@@ -143,6 +177,9 @@ class Robot : public frc::TimedRobot {
   }
 
   void AutonomousPeriodic() override {
+    //TODO - Auto is not working somehow. Intake is not checked enough
+    //Possible solution - All autos must be 15 seconds even when real auto is 8
+    
     //initial values for the auto
     int x = frc::SmartDashboard::GetNumber("Delay (Sec)", 0);
     //inital speed of the intake is 40% for the sake of testing
@@ -231,14 +268,14 @@ class Robot : public frc::TimedRobot {
       //4. A little forward
       //5. turn right - 90 degrees
       //6. jump onto the bridge
-      if(m_timer.Get() < secondsX){                     // PERFECT VOLTAGE - 12.3 - 12.5
+      if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
       else if(m_timer.Get() < 0.15_s + secondsX){
         m_robotDrive.TankDrive(-0.6, -0.6, false); 
       }
       else if(m_timer.Get() < 1.5_s + secondsX){
-        m_robotDrive.TankDrive(0.9, 0.9, false);  //this is going between 0.15 and 1.2
+        m_robotDrive.TankDrive(0.9, 0.9, false); //this is going between 0.15 and 1.2
       }
       else if(m_timer.Get() < 1.7_s + secondsX){
         m_robotDrive.TankDrive(0, 0, false); 
@@ -292,20 +329,20 @@ class Robot : public frc::TimedRobot {
       //4. A little forward
       //5. turn right - 90 degrees
       //6. jump onto the bridge
-      if(m_timer.Get() < secondsX){                     // PERFECT VOLTAGE - 12.3 - 12.5
+      if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
       else if(m_timer.Get() < 0.15_s + secondsX){
         m_robotDrive.TankDrive(-0.6, -0.6, false); 
       }
       else if(m_timer.Get() < 1.5_s + secondsX){
-        m_robotDrive.TankDrive(0.9, 0.9, false);  //this is going between 0.15 and 1.2
+        m_robotDrive.TankDrive(0.9, 0.9, false); //this is going between 0.15 and 1.2
       }
       else if(m_timer.Get() < 1.7_s + secondsX){
         m_robotDrive.TankDrive(0, 0, false); 
       }
       else if(m_timer.Get() < 2_s + secondsX){
-        m_robotDrive.TankDrive(-0.7, 0.7, false);  //initially 0.65
+        m_robotDrive.TankDrive(-0.7, 0.7, false); //initially 0.65
       }
       else if(m_timer.Get() < 2.6_s + secondsX){ //0.3sec to turn 90 degrees with speed 0.62
         m_robotDrive.TankDrive(-0.6, -0.6, false); 

@@ -13,6 +13,8 @@
 #include <frc/PowerDistribution.h>
 #include <networktables/NetworkTableInstance.h>
 #include <iostream>
+#include <rev/CANEncoder.h>
+#include <rev/AbsoluteEncoder.h>
 
 #include <frc/TimedRobot.h>
 #include <frc2/command/Command.h>
