@@ -1,9 +1,14 @@
+//You can tune the P gain to achieve the desired response of the arm motion. 
+//Increasing the P gain will make the arm move faster but can also cause overshoot and oscillations. 
+//The I and D gains can be added to improve the response and stability of the arm motion. 
+//You can experiment with different values to find the best performance for your robot.
+
 #include "Robot.h"
 #include "RobotContainer.h"
 
   //auto options
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoOptions[] = { "NONE", "Red_Mid_BR", "Red_left_BR", "Red_left_PushGo", "Red_right_BR", "Red_Mid_ScoreTwo", "Red_right_PushGo", "Blue_Mid_BR", "Blue_left_BR", "Blue_left_PushGo", "Blue_right_BR", "Blue_Mid_ScoreTwo", "Blue_right_PushGo"};
+  const std::string kAutoOptions[] = { "NONE", "R_Left", "R_Mid", "R_Right", "R_Left_BR", "R_Right_BR"};
 
 
 
@@ -34,19 +39,25 @@ class Robot : public frc::TimedRobot {
     //Timer for Auto
     frc::Timer m_timer;
 
+     // set the Motion Magic parameters
+    const double kMaxVelocity = 1000.0; // adjust as needed
+    const double kMaxAcceleration = 5000.0; // adjust as needed
+    
+
     bool coneInt = true;
     
     
  public:
   void RobotInit() override {
+    //Magic Motion Variables
+    //m_arm.GetPIDController().SetSmartMotionMaxVelocity(kMaxVelocity, 0);
+    //m_arm.GetPIDController().SetSmartMotionMaxAccel(kMaxAcceleration, 0);
+    //m_arm.GetPIDController().SetSmartMotionAllowedClosedLoopError(0, 0);
 
     //right motor must be inverted for it to go forward
-    m_rightMotors.SetInverted(true);
-    //reset the intake settings to default
-    
+    m_rightMotors.SetInverted(true);    
 
     //reset all motors before start
-    //need to add more as intake is developed
     m_leftMotor1.RestoreFactoryDefaults();
     m_leftMotor2.RestoreFactoryDefaults();
     m_rightMotor1.RestoreFactoryDefaults();
@@ -54,18 +65,11 @@ class Robot : public frc::TimedRobot {
     
     //list of Auto Options
     m_chooser.SetDefaultOption("NONE", kAutoOptions[0]);
-    m_chooser.AddOption("Red_Mid_BR", kAutoOptions[1]);
-    m_chooser.AddOption("Red_left_BR", kAutoOptions[2]);
-    m_chooser.AddOption("Red_left_PushGo", kAutoOptions[3]);
-    m_chooser.AddOption("Red_right_BR", kAutoOptions[4]);
-    m_chooser.AddOption("Red_Mid_ScoreTwo", kAutoOptions[5]);
-    m_chooser.AddOption("Red_right_PushGo", kAutoOptions[6]);
-    m_chooser.AddOption("Blue_Mid_BR", kAutoOptions[7]);
-    m_chooser.AddOption("Blue_left_BR", kAutoOptions[8]);
-    m_chooser.AddOption("Blue_left_PushGo", kAutoOptions[9]);
-    m_chooser.AddOption("Blue_right_BR", kAutoOptions[10]);
-    m_chooser.AddOption("Blue_Mid_ScoreTwo", kAutoOptions[11]);
-    m_chooser.AddOption("Blue_right_PushGo", kAutoOptions[12]);
+    m_chooser.AddOption("R_Left", kAutoOptions[1]);
+    m_chooser.AddOption("R_Mid", kAutoOptions[2]);
+    m_chooser.AddOption("R_Right", kAutoOptions[3]);
+    m_chooser.AddOption("R_Left_BR", kAutoOptions[4]);
+    m_chooser.AddOption("R_Right_BR", kAutoOptions[5]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
     //intake + arm speed
@@ -76,8 +80,8 @@ class Robot : public frc::TimedRobot {
     frc::SmartDashboard::PutNumber("Delay (Sec)", 0);
 
     //limintation of speed and rotation sensitivity
-    frc::SmartDashboard::PutNumber("Rotation Sesitivity", 1);
-    frc::SmartDashboard::PutNumber("Speed Sesitivity", 1);
+    frc::SmartDashboard::PutNumber("Rotation Sesitivity", 0.9);
+    frc::SmartDashboard::PutNumber("Speed Sesitivity", 0.85);
 
     //boolean to determine if we picking up a code - initially false
     frc::SmartDashboard::PutBoolean("Cone", false);
@@ -94,15 +98,19 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.EnableVoltageCompensation(12.3);
     m_rightMotor1.EnableVoltageCompensation(12.3);
     m_rightMotor2.EnableVoltageCompensation(12.3);
-
-    frc::SmartDashboard::PutNumber("foward tick", 0);
   }
 
   void TeleopPeriodic() override {
 
+    //limit edges of the arm
+    constexpr int kUpperLimitSwitchPort = 0; //change as needed
+    constexpr int kLowerLimitSwitchPort = 1;
+    frc::DigitalInput m_upperLimitSwitch(kUpperLimitSwitchPort);
+    frc::DigitalInput m_lowerLimitSwitch(kLowerLimitSwitchPort);
+
     //limtations on speed and rotation
-    double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 0.8);
-    double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 0.8);
+    double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 0.9);
+    double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 0.85);
 
     //numbers to limit both motor's capacity
      double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%?
@@ -131,10 +139,19 @@ class Robot : public frc::TimedRobot {
        m_robotDrive.ArcadeDrive(speed * Totsens, rotation * m_rot);
      }
 
-    //-------------------------------------INTAKE CODE HERE:-----------------------------------------------
+    //-------------------------------------INTAKE CODE-----------------------------------------------
     //TODO cgange it to make it easier to understand and adapt to
-    if (controller.GetYButtonReleased()){coneInt = false;} else { coneInt = true;}
+    if (controller.GetYButton()){coneInt = false;} else { coneInt = true;}
     frc::SmartDashboard::PutBoolean("Cone", coneInt);
+
+    //  double kArmAxis = controllerOP.GetLeftY();
+
+    //  // convert the joystick input to a target position for Motion Magic
+    //  const double kTargetRange = 1000.0; // adjust as needed
+    //  double targetPosition = armSpeed * kTargetRange;
+
+    //  // set the target position for Motion Magic
+    // m_arm.GetPIDController().SetReference(targetPosition, ControlType::kSmartMotion, 0);
     
     //use controllerOP for the second controller
     //TODO move it to controllerOP + modify as needed
@@ -157,29 +174,40 @@ class Robot : public frc::TimedRobot {
        m_intake.Set(0.0);
      }
 
-     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
-    m_arm.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, 0);
+
+
+    //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
+    //m_arm.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, 0);
     //m_arm.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, 0);
-   // frc::SmartDashboard::PutNumber("foward tick", e_arm.GetPosition());
-    if(controller.GetXButton()){
-      m_arm.Set(0.6);
-    }else if(controller.GetBButton()){
-      m_arm.Set(-0.6);
-      // m_arm.GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42).SetPosition()
-    }else{
+    //frc::SmartDashboard::PutNumber("foward tick", e_arm.GetPosition());
+    if(controller.GetXButton())
+    {
+      m_arm.Set(armSpeed);
+    }
+    else if(controller.GetBButton())
+    {
+      m_arm.Set(-armSpeed);
+      //m_arm.GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42).SetPosition();
+    }
+    // else if (m_upperLimitSwitch.Get() || m_lowerLimitSwitch.Get())
+    // {
+    //  m_arm.Set(0.0);
+    // }
+    else
+    {
       m_arm.Set(0.0);
     }
   }
-    //*************************************************AUTONOMUS CODE BELLOW*************************************************************
+    //*************************************************AUTONOMUS CODE*************************************************************
   void AutonomousInit() override {
     m_timer.Reset();
     m_timer.Start();
   }
 
   void AutonomousPeriodic() override {
-    //TODO - Auto is not working somehow. Intake is not checked enough
+    //TODO - Auto is not working somehow. Motors are not checked frequently enough
     //Possible solution - All autos must be 15 seconds even when real auto is 8
-    
+
     //initial values for the auto
     int x = frc::SmartDashboard::GetNumber("Delay (Sec)", 0);
     //inital speed of the intake is 40% for the sake of testing
@@ -191,7 +219,7 @@ class Robot : public frc::TimedRobot {
     units::unit_t<units::time::second, double, units::linear_scale> secondsX(x);
 
 
-      if(selectedOption == "Red_Mid_BR"){
+    if(selectedOption == "R_Mid"){
       //MUST FACE THE DRIVER
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
@@ -208,66 +236,41 @@ class Robot : public frc::TimedRobot {
       else if(m_timer.Get() < 1.7_s + secondsX){
         m_robotDrive.TankDrive(0, 0, false); 
       }
-    }
-    
-    else if(selectedOption == "Blue_mid_BR"){
-      //MUST FACE THE DRIVER
-      if(m_timer.Get() < secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-      }
-      else if(m_timer.Get() < 0.15_s + secondsX){
-        m_robotDrive.TankDrive(0.6, 0.6, false); 
-      }
-      else if(m_timer.Get() < 1.3_s + secondsX){
-        m_robotDrive.TankDrive(-0.7, -0.7, false); //initially 0.9 
-      }
-      else if(m_timer.Get() < 1.35_s + secondsX){
-        m_robotDrive.TankDrive(0.8, 0.8, false); 
-      }
-      else if(m_timer.Get() < 1.7_s + secondsX){
-        m_robotDrive.TankDrive(0, 0, false); 
-      }
-    }
-
-    else if(selectedOption == "Red_Mid_ScoreTwo"){
-      //MUST FACE THE DRIVER
-      if(m_timer.Get() < secondsX){
-        m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-      }
-      else if(m_timer.Get() < 0.15_s + secondsX){
-        m_robotDrive.TankDrive(0.6, 0.6, false); 
-      }
-      else if(m_timer.Get() < 1.3_s + secondsX){
-        m_robotDrive.TankDrive(-0.53, -0.53, false); 
-      }
-      else if(m_timer.Get() < 1.35_s + secondsX){
-        m_robotDrive.TankDrive(0.8, 0.8, false); 
-      }
-      else if(m_timer.Get() < 1.7_s + secondsX){
-        m_robotDrive.TankDrive(0, 0, false); 
-      }
-      else if(m_timer.Get() < 3.3_s + secondsX){
-        m_robotDrive.TankDrive(-0.3, -0.3, false); 
-      }
-      else if(m_timer.Get() < 3.9_s + secondsX){
-        m_robotDrive.TankDrive(-0.6, -0.6, false);
-      }
-      else if(m_timer.Get() < 15_s + secondsX){
+      else{
         m_robotDrive.TankDrive(0, 0, false);
       }
     }
 
-    else if(selectedOption == "Red_left_BR"){
+    // else if(selectedOption == "Red_Mid_ScoreTwo"){
+    //   //MUST FACE THE DRIVER
+    //   if(m_timer.Get() < secondsX){
+    //     m_robotDrive.ArcadeDrive(0.0, 0.0, false);
+    //   }
+    //   else if(m_timer.Get() < 0.15_s + secondsX){
+    //     m_robotDrive.TankDrive(0.6, 0.6, false); 
+    //   }
+    //   else if(m_timer.Get() < 1.3_s + secondsX){
+    //     m_robotDrive.TankDrive(-0.53, -0.53, false); 
+    //   }
+    //   else if(m_timer.Get() < 1.35_s + secondsX){
+    //     m_robotDrive.TankDrive(0.8, 0.8, false); 
+    //   }
+    //   else if(m_timer.Get() < 1.7_s + secondsX){
+    //     m_robotDrive.TankDrive(0, 0, false); 
+    //   }
+    //   else if(m_timer.Get() < 3.3_s + secondsX){
+    //     m_robotDrive.TankDrive(-0.3, -0.3, false); 
+    //   }
+    //   else if(m_timer.Get() < 3.9_s + secondsX){
+    //     m_robotDrive.TankDrive(-0.6, -0.6, false);
+    //   }
+    //   else if(m_timer.Get() < 15_s + secondsX){
+    //     m_robotDrive.TankDrive(0, 0, false);
+    //   }
+    // }
+
+    else if(selectedOption == "R_Left_BR"){
      //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing(TankDrive ONLY):
-
-      //1. facing driver it goes a little forward with object and release it
-      //2. going backwards
-      //3. tiurn left - 90 degrees
-      //4. A little forward
-      //5. turn right - 90 degrees
-      //6. jump onto the bridge
       if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
@@ -303,7 +306,7 @@ class Robot : public frc::TimedRobot {
       }
     }
 
-    else if(selectedOption == "Red_left_PushGo"){
+    else if(selectedOption == "R_Left"){
       if(m_timer.Get() < secondsX){
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
@@ -316,19 +319,13 @@ class Robot : public frc::TimedRobot {
       else if(m_timer.Get() < 1.7_s + secondsX){
         m_robotDrive.TankDrive(0, 0, false); 
       }
+      else{
+        m_robotDrive.TankDrive(0, 0, false);
+      }
     }
 
     else if(selectedOption == "Red_right_BR"){
       //ROBOT MUST FACE THE DRIVER
-
-      //What this Auto is doing(TankDrive ONLY):
-
-      //1. facing driver it goes a little forward with object and release it
-      //2. going backwards
-      //3. tiurn left - 90 degrees
-      //4. A little forward
-      //5. turn right - 90 degrees
-      //6. jump onto the bridge
       if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
         m_robotDrive.ArcadeDrive(0.0, 0.0, false);
       }
