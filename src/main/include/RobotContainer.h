@@ -15,6 +15,9 @@
 #include <networktables/NetworkTableInstance.h>
 #include <iostream>
 #include <rev/CANEncoder.h>
+#include <rev/SparkMaxRelativeEncoder.h>
+#include <rev/RelativeEncoder.h>
+#include <rev/CANDigitalInput.h>
 #include <rev/AbsoluteEncoder.h>
 #include <rev/CANPIDController.h>
 #include "rev/ControlType.h"
