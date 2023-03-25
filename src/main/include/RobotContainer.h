@@ -20,9 +20,30 @@
 #include <rev/CANDigitalInput.h>
 #include <rev/AbsoluteEncoder.h>
 #include <rev/CANPIDController.h>
+#include <frc/SPI.h>
+#include <frc/encoder.h>
+#include <frc/DigitalInput.h>      // DigitalInput class
+#include <frc/Solenoid.h>          // Solenoid class
+#include <frc/DoubleSolenoid.h>    // DoubleSolenoid class
+#include <frc/Compressor.h>        // Compressor class
+#include <frc/SPI.h>               // SPI class
+#include <frc/ADXRS450_Gyro.h>     // ADXRS450 gyro class
+#include <frc/AnalogGyro.h>        // Analog gyro class
+#include <frc2/command/PIDCommand.h>
+#include <frc/motorcontrol/PWMSparkMax.h>
+#include <frc2/command/PIDSubsystem.h>
+#include <frc2/command/CommandHelper.h>
+#include <AHRS.h>
+#include <frc/AnalogInput.h>
+#include <frc/AnalogGyro.h>
+#include <frc/AnalogPotentiometer.h>
+#include <frc/AnalogTrigger.h>
+#include <frc/AnalogTriggerOutput.h>
+#include <frc/AnalogAccelerometer.h>
 #include "rev/ControlType.h"
 #include "rev/SparkMaxPIDController.h"
 #include <frc/DigitalInput.h>
+#include <frc/RobotBase.h>
 
 
 #include <frc2/command/Command.h>

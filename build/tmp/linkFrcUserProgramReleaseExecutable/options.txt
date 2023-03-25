@@ -4,6 +4,7 @@
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\5bd43630663cd7d7605ffb4762eb5df5\\transformed\\wpilibNewCommands-cpp-2023.2.1-linuxathena\\linux\\athena\\shared\\libwpilibNewCommands.so
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\4edb8eec8348a64d49c7bcc131185dbe\\transformed\\REVLib-cpp-2023.1.2-linuxathenastatic\\linux\\athena\\static\\libREVLib.a
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\75a6e0addca08d6f7cc8e5c708ec995c\\transformed\\REVLib-driver-2023.1.2-linuxathenastatic\\linux\\athena\\static\\libREVLibDriver.a
+C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\40db6251f4b54a13010fca702c48995c\\transformed\\navx-frc-cpp-2023.0.3-linuxathenastatic\\linux\\athena\\static\\libNavX.a
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\937c155a85fa4d01f1d0faca046849cb\\transformed\\wpilibc-cpp-2023.2.1-linuxathena\\linux\\athena\\shared\\libwpilibc.so
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\84160d9fac88c3a2e21fb9feab7f8de9\\transformed\\ntcore-cpp-2023.2.1-linuxathena\\linux\\athena\\shared\\libntcore.so
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\6f35d5fd4948b5a6dd74dd3edc6e42b4\\transformed\\hal-cpp-2023.2.1-linuxathena\\linux\\athena\\shared\\libwpiHal.so

@@ -23,6 +23,8 @@ C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\42f38e19d369be62c60a4c75f75848a
 -I
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\d9fb80daceb6188ce304fcf708eaf42e\\transformed\\REVLib-driver-2023.1.2-headers
 -I
+C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\ea5dee7ac37a3d3e6c24a260e6bbb949\\transformed\\navx-frc-cpp-2023.0.3-headers
+-I
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\7f0bd2e0c7e721653d8cadbe29924bdb\\transformed\\wpilibc-cpp-2023.2.1-headers
 -I
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\e9d83413e445c9e0a93056169a467fef\\transformed\\ntcore-cpp-2023.2.1-headers

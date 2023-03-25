@@ -1,36 +1,15 @@
 See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramDebugExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
 C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::TeleopPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:154:72: warning: 'ControlType' is deprecated: Use CANSparkMax::ControlType instead [-Wdeprecated-declarations]
-  154 |     m_arm.GetPIDController().SetReference(targetPosition, ControlType::kSmartMotion, 0);
-      |                                                                        ^~~~~~~~~~~~
-In file included from C:\Users\skyla\.gradle\caches\transforms-3\42f38e19d369be62c60a4c75f75848a9\transformed\REVLib-cpp-2023.1.2-headers/rev/CANPIDController.h:45,
-                 from C:\Users\skyla\.gradle\caches\transforms-3\42f38e19d369be62c60a4c75f75848a9\transformed\REVLib-cpp-2023.1.2-headers/rev/CANSparkMax.h:52,
-                 from C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\include/RobotContainer.h:10,
-                 from C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\include/Robot.h:2,
-                 from C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:6:
-C:\Users\skyla\.gradle\caches\transforms-3\42f38e19d369be62c60a4c75f75848a9\transformed\REVLib-cpp-2023.1.2-headers/rev/ControlType.h:36:67: note: declared here
-   36 | enum class WPI_DEPRECATED("Use CANSparkMax::ControlType instead") ControlType {
-      |                                                                   ^~~~~~~~~~~
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:154:42: warning: 'virtual rev::REVLibError rev::SparkMaxPIDController::SetReference(double, rev::ControlType, int, double, rev::CANPIDController::ArbFFUnits)' is deprecated: Use SetReference(double, CANSparkMax::ControlType, int, double, SparkMaxPIDController::ArbFFUnits) instead [-Wdeprecated-declarations]
-  154 |     m_arm.GetPIDController().SetReference(targetPosition, ControlType::kSmartMotion, 0);
-      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from C:\Users\skyla\.gradle\caches\transforms-3\42f38e19d369be62c60a4c75f75848a9\transformed\REVLib-cpp-2023.1.2-headers/rev/CANSparkMax.h:59:
-C:\Users\skyla\.gradle\caches\transforms-3\42f38e19d369be62c60a4c75f75848a9\transformed\REVLib-cpp-2023.1.2-headers/rev/SparkMaxPIDController.h:127:17: note: declared here
-  127 |     REVLibError SetReference(
-      |                 ^~~~~~~~~~~~
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:116:13: warning: unused variable 'sensLeft' [-Wunused-variable]
-  116 |      double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%?
-      |             ^~~~~~~~
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:117:13: warning: unused variable 'sensRight' [-Wunused-variable]
-  117 |      double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
-      |             ^~~~~~~~~
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:147:13: warning: unused variable 'kArmAxis' [-Wunused-variable]
-  147 |      double kArmAxis = controllerOP.GetLeftY();
-      |             ^~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:128:12: warning: unused variable 'sensLeft' [-Wunused-variable]
+  128 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
+      |            ^~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:129:12: warning: unused variable 'sensRight' [-Wunused-variable]
+  129 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
+      |            ^~~~~~~~~
 C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::AutonomousPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:208:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  208 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:243:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
+  243 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
       |            ^~~~~~~~~~~
 
 Finished compileFrcUserProgramDebugExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt.
