@@ -31,7 +31,10 @@ class Robot : public frc::TimedRobot {
     rev::CANSparkMax m_intake{3, rev::CANSparkMax::MotorType::kBrushless};
     rev::CANSparkMax m_arm{8, rev::CANSparkMax::MotorType::kBrushless};
 
+    rev::SparkMaxPIDController m_pidController = m_arm.GetPIDController();
     rev::SparkMaxRelativeEncoder m_encoder = m_arm.GetEncoder();
+    //frc::DigitalInput UpperLim {0.6};
+    //frc::DigitalInput BotLimit {0};
 
     //Controller for driver
     frc::XboxController controller{0}; 
@@ -45,14 +48,12 @@ class Robot : public frc::TimedRobot {
     AHRS m_navx{frc::SPI::Port::kMXP};
 
      // set the int parameters
-    const double kP = 0.05;
-    const double kI = 0.0;
-    const double kD = 0.0;
-    const double kF = 0.0;
+    double kMaxVel = 1000, kMinVel = 0, kMaxAcc = 500, kAllErr = 0;
+    bool isHoldingPosition = false;
     const double kToleranceDegrees = 2.0;
 
     // create a PID controller
-    frc2::PIDController m_autoControlPID{kP, kI, kD};
+    frc2::PIDController m_autoControlPID{0.1, 0.0, 0.0};
 
      // Output value for the PID controller
     double m_output = 0.0;
@@ -65,11 +66,34 @@ class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override {
 
+    m_arm.SetInverted(true);
+
+    // Set encoder counts per revolution and distance per pulse
+    m_encoder.SetPositionConversionFactor(1.0);
+    m_encoder.SetVelocityConversionFactor(1.0);
+
     // Set up the PID controller
-    m_autoControlPID.SetP(kP);
-    m_autoControlPID.SetI(kI);
-    m_autoControlPID.SetD(kD);
-    m_autoControlPID.SetTolerance(kToleranceDegrees);
+    m_pidController.SetP(0.1);
+    m_pidController.SetI(0.0);
+    m_pidController.SetD(0.0);
+    m_pidController.SetIZone(0.0);
+    m_pidController.SetFF(0.0);
+    m_pidController.SetOutputRange(-1.0, 1.0);
+    const double kMaxOutput = 1.0;
+    const double kMinOutput = -1.0;
+    const double kMaxPosition = 100.0; // maximum position in encoder units
+    const double kMinPosition = 0.0; // minimum position in encoder units
+    const double kInitialPosition = 0.0; // initial position in encoder units
+
+    m_pidController.SetSmartMotionMaxVelocity(kMaxVel);
+    m_pidController.SetSmartMotionMinOutputVelocity(kMinVel);
+    m_pidController.SetSmartMotionMaxAccel(kMaxAcc);
+    m_pidController.SetSmartMotionAllowedClosedLoopError(kAllErr);
+
+    double armSetpoint = kInitialPosition;
+
+    frc::SmartDashboard::PutBoolean("Mode", true);
+
 
     // Set the controller to be continuous (because it is an angle controller)
     m_navx.Calibrate();
@@ -121,6 +145,29 @@ class Robot : public frc::TimedRobot {
   }
 
   void TeleopPeriodic() override {
+
+    double kP = 0.1;
+    double kI = 0.0;
+    double kD = 0.0;
+    frc2::PIDController pidController(kP, kI, kD);
+    pidController.SetTolerance(0.5);
+
+    double p = frc::SmartDashboard::GetNumber("P Gain", 0.1);
+    double i = frc::SmartDashboard::GetNumber("I Gain", 0);
+    double d = frc::SmartDashboard::GetNumber("D Gain", 0);
+    double iz = frc::SmartDashboard::GetNumber("I Zone", 0);
+    double ff = frc::SmartDashboard::GetNumber("Feed Forward", 1);
+    double max = frc::SmartDashboard::GetNumber("Max Output", 100);
+    double min = frc::SmartDashboard::GetNumber("Min Output", -100);
+    double maxV = frc::SmartDashboard::GetNumber("Max Velocity", 100);
+    double minV = frc::SmartDashboard::GetNumber("Min Velocity", 10);
+    double maxA = frc::SmartDashboard::GetNumber("Max Acceleration", 1);
+    double allE = frc::SmartDashboard::GetNumber("Allowed Closed Loop Error", 0);
+
+    if((maxV != kMaxVel)) { m_pidController.SetSmartMotionMaxVelocity(maxV); kMaxVel = maxV; }
+    if((minV != kMinVel)) { m_pidController.SetSmartMotionMinOutputVelocity(minV); kMinVel = minV; }
+    if((maxA != kMaxAcc)) { m_pidController.SetSmartMotionMaxAccel(maxA); kMaxAcc = maxA; }
+    if((allE != kAllErr)) { m_pidController.SetSmartMotionAllowedClosedLoopError(allE); allE = kAllErr; }
 
     // Read button input from joystick
     bool button_state = false;
@@ -175,17 +222,18 @@ class Robot : public frc::TimedRobot {
 
     // Get the number of rotations of the motor
     double numRotations = m_encoder.GetPosition() / 42.0;
-    if(controller.GetLeftStickButtonReleased() > 0){
+    if(controllerOP.GetLeftStickButtonReleased() > 0){
       m_encoder.SetPosition(0);
     }
     frc::SmartDashboard::PutNumber("Arm Rotation", numRotations);
+    double m_roatat = frc::SmartDashboard::GetNumber("Arm Rotation", numRotations);
     
     //TODO move it to controllerOP + modify as needed
     if(controllerOP.GetLeftTriggerAxis() != 0){
       if (coneInt){
       m_intake.Set(-intakeSpeed); //may need to manually change the values
       } else{
-      m_intake.Set(intakeSpeed);
+      m_intake.Set(intakeSpeed * 0.5);
       }
       
     }
@@ -195,7 +243,7 @@ class Robot : public frc::TimedRobot {
     if (coneInt){
       m_intake.Set(intakeSpeed);
       } else{
-      m_intake.Set(-intakeSpeed);
+      m_intake.Set(-intakeSpeed * 0.5);
       }
      }
      else
@@ -206,43 +254,81 @@ class Robot : public frc::TimedRobot {
 
 
     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
-    // // Check if button state has changed since last iteration
-    // if (button_state != button_pressed) {
-    //   // Button state has changed, so toggle motor direction and reset motor position
-    //   motor_direction = -motor_direction;
-    //   //may change later
-    //   motor_position = numRotations;
-    //   button_pressed = button_state;
+    double SetPoint, ProcessVariable;
+    ProcessVariable = m_encoder.GetPosition();
+    SetPoint = 23.3;
+
+    if(controllerOP.GetYButtonReleased() > 0){
+      // Smart motion control mode
+      SetPoint = 1;
+      m_pidController.SetReference(SetPoint, rev::CANSparkMax::ControlType::kSmartMotion); 
+    }
+
+    else if(controllerOP.GetAButtonReleased() > 0){
+      // Smart motion control mode
+      SetPoint = 23.3;
+      m_pidController.SetReference(SetPoint, rev::CANSparkMax::ControlType::kSmartMotion);
+    }
+
+    // Read current position from encoder
+    double currentPosition = m_encoder.GetPosition();
+
+    // Calculate PID output
+    double output = pidController.Calculate(currentPosition);
+
+    m_pidController.SetReference(SetPoint, rev::CANSparkMax::ControlType::kSmartMotion); 
+    
+    // Set motor output
+    //m_arm.Set(-output * 0.1); 
+
+     // Check if the hold position button is pressed and hold the current position if it is
+     if (controllerOP.GetBButton()) {
+       m_pidController.SetReference(m_roatat, rev::CANSparkMax::ControlType::kPosition);
+     }
+
+    // // Check if the move to position button is pressed and move to the setpoint if it is
+    // if (controllerOP.GetXButton()) {
+    //   m_pidController.SetReference(SetPoint, rev::CANSparkMax::ControlType::kPosition);
     // }
 
-    // // Check if motor should be stopped or moved
-    // if (motor_direction == 0 || motor_position >= -8 || motor_position <= 4) {
-    //   // Motor should be stopped, so set speed to 0
-    //   m_arm.Set(0);
-    // } 
-    // else
-    // {
-    //   // Motor should be moved, so set speed based on position error
-    //   double error = -8.0 - (numRotations - motor_position);
-    //   double speed = error * 0.1;
-    //   m_arm.Set(speed);
+    // Update SmartDashboard values
+    frc::SmartDashboard::PutNumber("Set Point", SetPoint);
+    frc::SmartDashboard::PutNumber("Process Variable", ProcessVariable);
+
+    // // Read the controller bumpers to adjust the output
+    // if (controllerOP.GetRightBumper()) {
+    //   m_arm.Set(armSpeed);
+    // } else if (controllerOP.GetLeftBumper()) {
+    //   m_arm.Set(-armSpeed);
     // }
+
+    // Update the motor output with the adjusted value
+    //m_arm.Set(armSpeed);
+    //frc::SmartDashboard::PutNumber("Output", Output);
+  
     
-    //TODO move it to controllerOP + modify as needed
-    if(controllerOP.GetXButton())
-    {
-      m_arm.Set(armSpeed * armSpeed);
+    // double armLimit = frc::SmartDashboard::GetNumber("Arm Rotation", numRotations);
+
+    if (controllerOP.GetLeftBumper()) {
+        // if (armLimit < -0.6) {
+        //     m_arm.Set(0.1);
+        // }
+        // else {
+             m_arm.Set(armSpeed);
+        // }
     }
-    //TODO move it to controllerOP + modify as needed
-    else if(controllerOP.GetBButton())
-    {
-      m_arm.Set(-armSpeed * armSpeed);
+    else if (controllerOP.GetRightBumper()) {
+        // if (armLimit > 0.12) {
+        //     m_arm.Set(-0.1);
+        // }
+        // else {
+             m_arm.Set(-armSpeed);
+        // }
     }
-    else
-    {
-      m_arm.Set(0.0);
+    else {
+        m_arm.Set(0.0);
     }
-  }
+}
     //*************************************************AUTONOMUS CODE*************************************************************
   void AutonomousInit() override {
     m_autoControlPID.Reset();

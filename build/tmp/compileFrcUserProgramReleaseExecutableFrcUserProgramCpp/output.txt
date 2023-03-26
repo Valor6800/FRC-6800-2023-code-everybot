@@ -1,15 +1,55 @@
 See file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::RobotInit()':
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:82:18: warning: unused variable 'kMaxOutput' [-Wunused-variable]
+   82 |     const double kMaxOutput = 1.0;
+      |                  ^~~~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:83:18: warning: unused variable 'kMinOutput' [-Wunused-variable]
+   83 |     const double kMinOutput = -1.0;
+      |                  ^~~~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:84:18: warning: unused variable 'kMaxPosition' [-Wunused-variable]
+   84 |     const double kMaxPosition = 100.0; // maximum position in encoder units
+      |                  ^~~~~~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:85:18: warning: unused variable 'kMinPosition' [-Wunused-variable]
+   85 |     const double kMinPosition = 0.0; // minimum position in encoder units
+      |                  ^~~~~~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:93:12: warning: unused variable 'armSetpoint' [-Wunused-variable]
+   93 |     double armSetpoint = kInitialPosition;
+      |            ^~~~~~~~~~~
 C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::TeleopPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:138:12: warning: unused variable 'sensLeft' [-Wunused-variable]
-  138 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:155:12: warning: unused variable 'p' [-Wunused-variable]
+  155 |     double p = frc::SmartDashboard::GetNumber("P Gain", 0.1);
+      |            ^
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:156:12: warning: unused variable 'i' [-Wunused-variable]
+  156 |     double i = frc::SmartDashboard::GetNumber("I Gain", 0);
+      |            ^
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:157:12: warning: unused variable 'd' [-Wunused-variable]
+  157 |     double d = frc::SmartDashboard::GetNumber("D Gain", 0);
+      |            ^
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:158:12: warning: unused variable 'iz' [-Wunused-variable]
+  158 |     double iz = frc::SmartDashboard::GetNumber("I Zone", 0);
+      |            ^~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:159:12: warning: unused variable 'ff' [-Wunused-variable]
+  159 |     double ff = frc::SmartDashboard::GetNumber("Feed Forward", 1);
+      |            ^~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:160:12: warning: unused variable 'max' [-Wunused-variable]
+  160 |     double max = frc::SmartDashboard::GetNumber("Max Output", 100);
+      |            ^~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:161:12: warning: unused variable 'min' [-Wunused-variable]
+  161 |     double min = frc::SmartDashboard::GetNumber("Min Output", -100);
+      |            ^~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:185:12: warning: unused variable 'sensLeft' [-Wunused-variable]
+  185 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
       |            ^~~~~~~~
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:139:12: warning: unused variable 'sensRight' [-Wunused-variable]
-  139 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:186:12: warning: unused variable 'sensRight' [-Wunused-variable]
+  186 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
       |            ^~~~~~~~~
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:277:12: warning: unused variable 'output' [-Wunused-variable]
+  277 |     double output = pidController.Calculate(currentPosition);
+      |            ^~~~~~
 C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::AutonomousPeriodic()':
-C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:271:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  271 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
+C:\Users\skyla\Desktop\GitHub Code\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:357:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
+  357 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
       |            ^~~~~~~~~~~
 
 Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/GitHub%20Code/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.
