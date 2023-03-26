@@ -59,11 +59,17 @@ class Robot : public frc::TimedRobot {
     bool button_pressed = false;
     int motor_direction = 0;
     int motor_position = 0;
+    double m_upperLimit = 90.0;  // example upper limit in degrees
+    double m_lowerLimit = 0.0;  // example lower limit in degrees
     bool coneInt = true;
     
     
  public:
   void RobotInit() override {
+
+     m_arm.RestoreFactoryDefaults();  // reset motor controller to default settings
+     m_encoder.SetPosition(0.0);  // reset encoder to zero position
+    
 
     // Set up the PID controller
     m_autoControlPID.SetP(kP);
@@ -166,10 +172,17 @@ class Robot : public frc::TimedRobot {
      }
 
     //-------------------------------------INTAKE CODE-----------------------------------------------
-    if (controller.GetYButtonReleased())
+    if (controller.GetYButtonReleased())      
     {
       coneInt = !coneInt;
     } 
+
+    if(!coneInt){
+
+    }
+    else{
+
+    }
 
     frc::SmartDashboard::PutBoolean("Cone", coneInt);
 
@@ -185,7 +198,7 @@ class Robot : public frc::TimedRobot {
       if (coneInt){
       m_intake.Set(-intakeSpeed); //may need to manually change the values
       } else{
-      m_intake.Set(intakeSpeed);
+      m_intake.Set(intakeSpeed * 0.3); //only 30% are availiable
       }
       
     }
@@ -195,7 +208,7 @@ class Robot : public frc::TimedRobot {
     if (coneInt){
       m_intake.Set(intakeSpeed);
       } else{
-      m_intake.Set(-intakeSpeed);
+      m_intake.Set(-intakeSpeed * 0.3);
       }
      }
      else
@@ -206,42 +219,43 @@ class Robot : public frc::TimedRobot {
 
 
     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
-    // // Check if button state has changed since last iteration
-    // if (button_state != button_pressed) {
-    //   // Button state has changed, so toggle motor direction and reset motor position
-    //   motor_direction = -motor_direction;
-    //   //may change later
-    //   motor_position = numRotations;
-    //   button_pressed = button_state;
-    // }
+    double armPosition = m_encoder.GetPosition();  // get current arm position from encoder
+    double armSpeed = controllerOP.GetLeftY();  // read joystick Y axis for arm speed control
 
-    // // Check if motor should be stopped or moved
-    // if (motor_direction == 0 || motor_position >= -8 || motor_position <= 4) {
-    //   // Motor should be stopped, so set speed to 0
-    //   m_arm.Set(0);
-    // } 
-    // else
-    // {
-    //   // Motor should be moved, so set speed based on position error
-    //   double error = -8.0 - (numRotations - motor_position);
-    //   double speed = error * 0.1;
-    //   m_arm.Set(speed);
-    // }
-    
-    //TODO move it to controllerOP + modify as needed
-    if(controllerOP.GetXButton())
-    {
-      m_arm.Set(armSpeed * armSpeed);
+    // calculate proportional speed reduction as arm approaches limit
+    double limitError = 0.0;  // distance to limit from current position
+    double limitThreshold = 0.1;  // distance at which speed reduction starts
+    double maxSpeedReduction = 0.5;  // maximum speed reduction factor (0.0 to 1.0)
+    if (armPosition > m_upperLimit - limitThreshold) {
+        limitError = m_upperLimit - armPosition;
+    } else if (armPosition < m_lowerLimit + limitThreshold) {
+        limitError = m_lowerLimit - armPosition;
     }
-    //TODO move it to controllerOP + modify as needed
-    else if(controllerOP.GetBButton())
-    {
-      m_arm.Set(-armSpeed * armSpeed);
+    double speedReduction = std::min(1.0, limitError / limitThreshold * maxSpeedReduction);
+
+    // apply speed reduction to arm speed
+    if (armSpeed > 0.0) {
+        armSpeed *= (1.0 - speedReduction);  // reduce speed if moving up
+    } else if (armSpeed < 0.0) {
+        armSpeed *= (1.0 + speedReduction);  // reduce speed if moving down
     }
-    else
-    {
-      m_arm.Set(0.0);
+
+    // check if limit is reached and stop motor if necessary
+    bool limitReached = false;
+    if (armPosition >= m_upperLimit) {
+        armSpeed = 0.0;
+        limitReached = true;
+    } else if (armPosition <= m_lowerLimit) {
+        armSpeed = 0.0;
+        limitReached = true;
     }
+
+    // apply arm speed to motor controller
+    m_armMotor.Set(armSpeed);
+
+    // update dashboard with arm position and limit status
+    frc::SmartDashboard::PutNumber("Arm Position", armPosition);
+    frc::SmartDashboard::PutBoolean("Limit Reached", limitReached);
   }
     //*************************************************AUTONOMUS CODE*************************************************************
   void AutonomousInit() override {

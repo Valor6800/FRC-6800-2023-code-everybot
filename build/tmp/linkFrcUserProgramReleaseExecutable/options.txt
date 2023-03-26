@@ -1,6 +1,6 @@
 -o
-"C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-code-everybot\\build\\exe\\frcUserProgram\\release\\frcUserProgram"
-"C:\\Users\\skyla\\Desktop\\GitHub Code\\FRC-6800-2023-code-everybot\\build\\objs\\frcUserProgram\\release\\frcUserProgramCpp\\3bg5a77l7vd4edmrxq5jco6ri\\Robot.o"
+C:\\Users\\skyla\\Desktop\\copy\\FRC-6800-2023-code-everybot\\build\\exe\\frcUserProgram\\release\\frcUserProgram
+C:\\Users\\skyla\\Desktop\\copy\\FRC-6800-2023-code-everybot\\build\\objs\\frcUserProgram\\release\\frcUserProgramCpp\\3bg5a77l7vd4edmrxq5jco6ri\\Robot.o
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\5bd43630663cd7d7605ffb4762eb5df5\\transformed\\wpilibNewCommands-cpp-2023.2.1-linuxathena\\linux\\athena\\shared\\libwpilibNewCommands.so
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\4edb8eec8348a64d49c7bcc131185dbe\\transformed\\REVLib-cpp-2023.1.2-linuxathenastatic\\linux\\athena\\static\\libREVLib.a
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\75a6e0addca08d6f7cc8e5c708ec995c\\transformed\\REVLib-driver-2023.1.2-linuxathenastatic\\linux\\athena\\static\\libREVLibDriver.a
