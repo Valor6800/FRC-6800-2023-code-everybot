@@ -56,9 +56,8 @@ class Robot : public frc::TimedRobot {
 
      // Output value for the PID controller
     double m_output = 0.0;
-    bool button_pressed = false;
-    int motor_direction = 0;
-    int motor_position = 0;
+    bool m_move = false;
+    bool m_hold = false;
     double m_upperLimit = 90.0;  // example upper limit in degrees
     double m_lowerLimit = 0.0;  // example lower limit in degrees
     bool coneInt = true;
@@ -66,6 +65,8 @@ class Robot : public frc::TimedRobot {
     
  public:
   void RobotInit() override {
+
+    m_arm.SetInverted(true);
 
      m_arm.RestoreFactoryDefaults();  // reset motor controller to default settings
      m_encoder.SetPosition(0.0);  // reset encoder to zero position
@@ -101,7 +102,7 @@ class Robot : public frc::TimedRobot {
 
     //intake + arm speed
     frc::SmartDashboard::PutNumber("Intake Speed", 1);
-    frc::SmartDashboard::PutNumber("Arm Speed", 0.5);
+    frc::SmartDashboard::PutNumber("Arm Speed", 0.2);
 
     //used to count NEO motor rotations to fully open an arm
     frc::SmartDashboard::PutNumber("Arm Rotation", 0);
@@ -146,7 +147,7 @@ class Robot : public frc::TimedRobot {
 
     //initial speed of the intake will be 80% + arm 100%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 1);
-    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.5);
+    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.2);
 
 
 
@@ -191,7 +192,9 @@ class Robot : public frc::TimedRobot {
     if(controller.GetLeftStickButtonReleased() > 0){
       m_encoder.SetPosition(0);
     }
-    frc::SmartDashboard::PutNumber("Arm Rotation", numRotations);
+    double m_armRot = numRotations;
+    frc::SmartDashboard::PutNumber("Arm Rotation", m_armRot);
+    
     
     //TODO move it to controllerOP + modify as needed
     if(controllerOP.GetLeftTriggerAxis() != 0){
@@ -219,43 +222,98 @@ class Robot : public frc::TimedRobot {
 
 
     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
-    double armPosition = m_encoder.GetPosition();  // get current arm position from encoder
-    double armSpeed = controllerOP.GetLeftY();  // read joystick Y axis for arm speed control
+    //change 0.5 to designated max value of the arm (Maybe 0.67)
 
-    // calculate proportional speed reduction as arm approaches limit
-    double limitError = 0.0;  // distance to limit from current position
-    double limitThreshold = 0.1;  // distance at which speed reduction starts
-    double maxSpeedReduction = 0.5;  // maximum speed reduction factor (0.0 to 1.0)
-    if (armPosition > m_upperLimit - limitThreshold) {
-        limitError = m_upperLimit - armPosition;
-    } else if (armPosition < m_lowerLimit + limitThreshold) {
-        limitError = m_lowerLimit - armPosition;
-    }
-    double speedReduction = std::min(1.0, limitError / limitThreshold * maxSpeedReduction);
-
-    // apply speed reduction to arm speed
-    if (armSpeed > 0.0) {
-        armSpeed *= (1.0 - speedReduction);  // reduce speed if moving up
-    } else if (armSpeed < 0.0) {
-        armSpeed *= (1.0 + speedReduction);  // reduce speed if moving down
+    //this logic is moving the arm into max arm position + automatic hold
+    if(controllerOP.GetYButtonPressed()){
+      m_arm.Set(-0.2);
     }
 
-    // check if limit is reached and stop motor if necessary
-    bool limitReached = false;
-    if (armPosition >= m_upperLimit) {
-        armSpeed = 0.0;
-        limitReached = true;
-    } else if (armPosition <= m_lowerLimit) {
-        armSpeed = 0.0;
-        limitReached = true;
+    //This logic is moving the arm into lowest point of the arm + automatic hold
+    if (controllerOP.GetAButtonPressed())
+    {
+      m_arm.Set(0.2);
+      // m_move = true;
+      // m_hold = false;
+      // if(m_armRot < 0 && m_move == true){ //change num as needed
+      //   m_arm.Set(armSpeed); 
+      // }
+      // else if (m_armRot > 0 && m_move == true){
+      //   m_arm.Set(0); //Stop at designated arm position
+      //   m_move = false;
+      //   m_hold = true;
+      // }
+      // else if(m_armRot < 0 && m_hold == true){
+      //   m_move = false;
+      //   m_hold = true;
+      //   m_arm.Set(armSpeed * 0.3); //only 30% are availiable
+      // }
+      // else{
+      //   m_arm.Set(0);
+      // }
+    }
+    // Set up a boolean variable to keep track of whether the motor has reached the setpoint
+    bool atSetpoint = false;
+    if(controllerOP.GetXButton()){
+      // If the motor has reached the setpoint, stop it
+      if (atSetpoint) {
+        m_arm.Set(0.0);
+      }
+
+      // If the position is greater than the setpoint, move the motor backwards
+      else if (m_armRot > -0.40) {
+        m_arm.Set(-0.2); 
+      }
+
+      // If the position is less than the setpoint, move the motor forwards
+      else if (m_armRot < -0.50) {
+        m_arm.Set(0.2); 
+      }
+
+      // If the position is exactly at the setpoint, stop the motor and set atSetpoint to true
+      else {
+        m_arm.Set(0.0);
+        atSetpoint = true;
+      }
     }
 
-    // apply arm speed to motor controller
-    m_armMotor.Set(armSpeed);
+    
 
-    // update dashboard with arm position and limit status
-    frc::SmartDashboard::PutNumber("Arm Position", armPosition);
-    frc::SmartDashboard::PutBoolean("Limit Reached", limitReached);
+    //right and left bumpers will be the manual control of the arm
+    if(controllerOP.GetRightBumper() != 0){
+      m_move = false;
+      m_hold = false;
+      m_arm.Set(-armSpeed);
+    }
+    //right and left bumpers will be the manual control of the arm
+    else if (controllerOP.GetLeftBumper() != 0){
+      m_move = false;
+      m_hold = false;
+      m_arm.Set(armSpeed);
+    }
+    else if (controllerOP.GetLeftBumperReleased() || controllerOP.GetRightBumperReleased()){
+      m_arm.Set(0);
+    }
+
+    //Current hold button
+    if(controllerOP.GetBButtonPressed()){
+      double holdnum = m_armRot;
+      m_hold = true;
+      if(m_armRot > holdnum){
+        m_arm.Set(-armSpeed * 0.3);
+      }
+      else if(m_armRot < holdnum){
+        m_arm.Set(armSpeed * 0.3);
+      }
+      else{
+        m_arm.Set(0);
+      }
+    }
+
+    //Reset the NEO motor rotation number
+    if(controllerOP.GetLeftStickButtonReleased()){
+      m_encoder.SetPosition(0);
+    }
   }
     //*************************************************AUTONOMUS CODE*************************************************************
   void AutonomousInit() override {

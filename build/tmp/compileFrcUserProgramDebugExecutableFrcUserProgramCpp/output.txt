@@ -1,15 +1,15 @@
 See file:///C:/Users/skyla/Desktop/copy/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramDebugExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
 C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::TeleopPeriodic()':
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:138:12: warning: unused variable 'sensLeft' [-Wunused-variable]
-  138 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:145:12: warning: unused variable 'sensLeft' [-Wunused-variable]
+  145 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
       |            ^~~~~~~~
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:139:12: warning: unused variable 'sensRight' [-Wunused-variable]
-  139 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:146:12: warning: unused variable 'sensRight' [-Wunused-variable]
+  146 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
       |            ^~~~~~~~~
 C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::AutonomousPeriodic()':
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:271:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  271 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:384:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
+  384 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
       |            ^~~~~~~~~~~
 
 Finished compileFrcUserProgramDebugExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/copy/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt.
