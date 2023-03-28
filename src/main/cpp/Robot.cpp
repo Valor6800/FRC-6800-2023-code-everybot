@@ -102,7 +102,7 @@ class Robot : public frc::TimedRobot {
 
     //intake + arm speed
     frc::SmartDashboard::PutNumber("Intake Speed", 1);
-    frc::SmartDashboard::PutNumber("Arm Speed", 0.2);
+    frc::SmartDashboard::PutNumber("Arm Speed", 0.3);
 
     //used to count NEO motor rotations to fully open an arm
     frc::SmartDashboard::PutNumber("Arm Rotation", 0);
@@ -147,7 +147,7 @@ class Robot : public frc::TimedRobot {
 
     //initial speed of the intake will be 80% + arm 100%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 1);
-    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.2);
+    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.3);
 
 
 
@@ -189,7 +189,7 @@ class Robot : public frc::TimedRobot {
 
     // Get the number of rotations of the motor
     double numRotations = m_encoder.GetPosition() / 42.0;
-    if(controller.GetLeftStickButtonReleased() > 0){
+    if(controllerOP.GetRightStickButtonReleased() > 0){
       m_encoder.SetPosition(0);
     }
     double m_armRot = numRotations;
@@ -226,13 +226,13 @@ class Robot : public frc::TimedRobot {
 
     //this logic is moving the arm into max arm position + automatic hold
     if(controllerOP.GetYButtonPressed()){
-      m_arm.Set(-0.2);
+      m_arm.Set(-0.3);
     }
 
     //This logic is moving the arm into lowest point of the arm + automatic hold
     if (controllerOP.GetAButtonPressed())
     {
-      m_arm.Set(0.2);
+      m_arm.Set(0.3);
       // m_move = true;
       // m_hold = false;
       // if(m_armRot < 0 && m_move == true){ //change num as needed
@@ -262,12 +262,12 @@ class Robot : public frc::TimedRobot {
 
       // If the position is greater than the setpoint, move the motor backwards
       else if (m_armRot > -0.40) {
-        m_arm.Set(-0.2); 
+        m_arm.Set(-0.3); 
       }
 
       // If the position is less than the setpoint, move the motor forwards
       else if (m_armRot < -0.50) {
-        m_arm.Set(0.2); 
+        m_arm.Set(0.3); 
       }
 
       // If the position is exactly at the setpoint, stop the motor and set atSetpoint to true

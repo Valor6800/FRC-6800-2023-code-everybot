@@ -8,8 +8,8 @@ C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:1
   146 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
       |            ^~~~~~~~~
 C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::AutonomousPeriodic()':
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:384:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
-  384 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:343:12: warning: unused variable 'intakeSpeed' [-Wunused-variable]
+  343 |     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 0.4);
       |            ^~~~~~~~~~~
 
 Finished compileFrcUserProgramDebugExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/copy/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramDebugExecutableFrcUserProgramCpp/output.txt.
