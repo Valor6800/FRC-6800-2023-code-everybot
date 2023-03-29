@@ -233,24 +233,6 @@ class Robot : public frc::TimedRobot {
     if (controllerOP.GetAButtonPressed())
     {
       m_arm.Set(0.3);
-      // m_move = true;
-      // m_hold = false;
-      // if(m_armRot < 0 && m_move == true){ //change num as needed
-      //   m_arm.Set(armSpeed); 
-      // }
-      // else if (m_armRot > 0 && m_move == true){
-      //   m_arm.Set(0); //Stop at designated arm position
-      //   m_move = false;
-      //   m_hold = true;
-      // }
-      // else if(m_armRot < 0 && m_hold == true){
-      //   m_move = false;
-      //   m_hold = true;
-      //   m_arm.Set(armSpeed * 0.3); //only 30% are availiable
-      // }
-      // else{
-      //   m_arm.Set(0);
-      // }
     }
     // Set up a boolean variable to keep track of whether the motor has reached the setpoint
     bool atSetpoint = false;
