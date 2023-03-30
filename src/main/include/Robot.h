@@ -12,5 +12,11 @@ static const double AUTO_THROW_TIME_S = 0.375;
 static const double AUTO_DRIVE_TIME = 6.0;
 static const double AUTO_DRIVE_SPEED = -0.25;
 
+
+
+// Output value for the PID controller
+double m_output = 0.0;
+bool coneInt = true;
+
 // Create a PowerDistributionPanel object
 frc::PowerDistribution pdp;

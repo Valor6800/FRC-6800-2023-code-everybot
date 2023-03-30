@@ -5,6 +5,7 @@
 
 #include "Robot.h"
 #include "RobotContainer.h"
+#include "PID.h"
 
   //auto options
   frc::SendableChooser<std::string> m_chooser;
@@ -43,24 +44,6 @@ class Robot : public frc::TimedRobot {
 
     //NavX
     AHRS m_navx{frc::SPI::Port::kMXP};
-
-     // set the int parameters
-    const double kP = 0.05;
-    const double kI = 0.0;
-    const double kD = 0.0;
-    const double kF = 0.0;
-    const double kToleranceDegrees = 2.0;
-
-    // create a PID controller
-    frc2::PIDController m_autoControlPID{kP, kI, kD};
-
-     // Output value for the PID controller
-    double m_output = 0.0;
-    bool m_move = false;
-    bool m_hold = false;
-    double m_upperLimit = 90.0;  // example upper limit in degrees
-    double m_lowerLimit = 0.0;  // example lower limit in degrees
-    bool coneInt = true;
     
     
  public:
@@ -125,6 +108,10 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.EnableVoltageCompensation(12.3);
     m_rightMotor1.EnableVoltageCompensation(12.3);
     m_rightMotor2.EnableVoltageCompensation(12.3);
+    m_leftMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    m_rightMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    m_rightMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    m_leftMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
   }
 
   void TeleopPeriodic() override {
@@ -156,62 +143,49 @@ class Robot : public frc::TimedRobot {
 
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY(); 
-    double SQRTspeed = sqrt(speed);
-    double rotation = controller.GetRightX(); 
+    double rotation = controller.GetRightX();
+    //sqrt the results for the smoothest speed
+    double SQRTspeed = sqrt(speed); 
     double SQRTrotation = sqrt(rotation);
 
     //main drive function 
     m_robotDrive.ArcadeDrive(SQRTspeed * Totsens, SQRTrotation * m_rot);
 
-    // Drive the robot forward when the A button is pressed
-     if(controller.GetAButton() > 0){
-      m_robotDrive.TankDrive(-0.7, -0.7);
-     }
-     else
-     {
-       m_robotDrive.ArcadeDrive(speed * Totsens, rotation * m_rot);
-     }
-
     //-------------------------------------INTAKE CODE-----------------------------------------------
     if (controller.GetYButtonReleased())      
     {
       coneInt = !coneInt;
-    } 
-
-    if(!coneInt){
-
-    }
-    else{
-
     }
 
     frc::SmartDashboard::PutBoolean("Cone", coneInt);
 
     // Get the number of rotations of the motor
-    double numRotations = m_encoder.GetPosition() / 42.0;
+    double m_armRot = m_encoder.GetPosition() / 42.0;
     if(controllerOP.GetRightStickButtonReleased() > 0){
       m_encoder.SetPosition(0);
     }
-    double m_armRot = numRotations;
     frc::SmartDashboard::PutNumber("Arm Rotation", m_armRot);
     
     
-    //TODO move it to controllerOP + modify as needed
+
     if(controllerOP.GetLeftTriggerAxis() != 0){
       if (coneInt){
       m_intake.Set(-intakeSpeed); //may need to manually change the values
       } else{
-      m_intake.Set(intakeSpeed * 0.3); //only 30% are availiable
+      m_intake.Set(intakeSpeed * 0.45); //only 45% are availiable
       }
       
     }
-     //TODO move it to controllerOP + modify as needed
+
     else if (controllerOP.GetRightTriggerAxis() != 0) 
     {
-    if (coneInt){
-      m_intake.Set(intakeSpeed);
-      } else{
-      m_intake.Set(-intakeSpeed * 0.3);
+      if (coneInt)
+      {
+          m_intake.Set(intakeSpeed);
+        }
+        else
+        {
+          m_intake.Set(-intakeSpeed * 0.45);
       }
      }
      else
@@ -222,7 +196,6 @@ class Robot : public frc::TimedRobot {
 
 
     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
-    //change 0.5 to designated max value of the arm (Maybe 0.67)
 
     //this logic is moving the arm into max arm position + automatic hold
     if(controllerOP.GetYButtonPressed()){
@@ -263,24 +236,19 @@ class Robot : public frc::TimedRobot {
 
     //right and left bumpers will be the manual control of the arm
     if(controllerOP.GetRightBumper() != 0){
-      m_move = false;
-      m_hold = false;
       m_arm.Set(-armSpeed);
     }
     //right and left bumpers will be the manual control of the arm
     else if (controllerOP.GetLeftBumper() != 0){
-      m_move = false;
-      m_hold = false;
       m_arm.Set(armSpeed);
     }
     else if (controllerOP.GetLeftBumperReleased() || controllerOP.GetRightBumperReleased()){
       m_arm.Set(0);
     }
 
-    //Current hold button
+    //Current hold button Not working yet
     if(controllerOP.GetBButtonPressed()){
       double holdnum = m_armRot;
-      m_hold = true;
       if(m_armRot > holdnum){
         m_arm.Set(-armSpeed * 0.3);
       }
@@ -314,7 +282,6 @@ class Robot : public frc::TimedRobot {
     double yaw = m_navx.GetYaw();
     //set to default
     m_autoControlPID.SetSetpoint(0);
-     // Log data to SmartDashboard
     frc::SmartDashboard::PutNumber("Yaw", yaw);
     frc::SmartDashboard::PutNumber("Output", m_output);
 
