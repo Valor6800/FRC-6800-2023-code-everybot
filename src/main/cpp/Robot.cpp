@@ -142,6 +142,10 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.EnableVoltageCompensation(12.3);
     m_rightMotor1.EnableVoltageCompensation(12.3);
     m_rightMotor2.EnableVoltageCompensation(12.3);
+    m_leftMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    m_rightMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    m_rightMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    m_leftMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
   }
 
   void TeleopPeriodic() override {
