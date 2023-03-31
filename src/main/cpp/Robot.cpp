@@ -143,7 +143,7 @@ class Robot : public frc::TimedRobot {
     double SQRTrotation = sqrt(rotation);
 
     //main drive function 
-    m_robotDrive.ArcadeDrive(SQRTspeed * Totsens, SQRTrotation * m_rot);
+    m_robotDrive.ArcadeDrive(speed * Totsens, rotation * m_rot);
 
     //-------------------------------------INTAKE CODE-----------------------------------------------
     if (controller.GetYButtonReleased())      
@@ -169,7 +169,7 @@ class Robot : public frc::TimedRobot {
       }
       else
       {
-      m_intake.Set(intakeSpeed * 0.45); //only 45% are availiable
+      m_intake.Set(intakeSpeed * 0.55); //only 45% are availiable
       }
       
     }
@@ -182,7 +182,7 @@ class Robot : public frc::TimedRobot {
         }
         else
         {
-          m_intake.Set(-intakeSpeed * 0.45);
+          m_intake.Set(-intakeSpeed * 0.55);
       }
      }
      else
@@ -196,13 +196,13 @@ class Robot : public frc::TimedRobot {
 
     //this logic is moving the arm into max arm position + automatic hold
     if(controllerOP.GetYButtonPressed()){
-      m_arm.Set(-0.3);
+      m_arm.Set(-0.4);
     }
 
     //This logic is moving the arm into lowest point of the arm + automatic hold
     if (controllerOP.GetAButtonPressed())
     {
-      m_arm.Set(0.3);
+      m_arm.Set(0.4);
     }
     // Set up a boolean variable to keep track of whether the motor has reached the setpoint
     bool atSetpoint = false;
