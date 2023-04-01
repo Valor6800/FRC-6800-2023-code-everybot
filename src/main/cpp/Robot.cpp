@@ -110,6 +110,8 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.EnableVoltageCompensation(12.3);
     m_rightMotor1.EnableVoltageCompensation(12.3);
     m_rightMotor2.EnableVoltageCompensation(12.3);
+    m_arm.EnableVoltageCompensation(12.3);
+    m_intake.EnableVoltageCompensation(12.3);
     //check if those are working
     m_leftMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     m_rightMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
@@ -135,6 +137,15 @@ class Robot : public frc::TimedRobot {
 
     //--------------------------------------DRIVE CODE HERE:--------------------------------------------
     //IMPORTANT: when mototr is - its going forward, and when its + its going backward (Its wierd but important for the auto)
+
+    
+    // Get the yaw angle from the navX-MXP sensor
+    double pitch = m_navx.GetPitch();
+    //double verticalAngle = Math.toDegrees(Math.atan2(pitch - yaw, 1));
+    //set to default
+    m_autoControlPID.SetSetpoint(0);
+    frc::SmartDashboard::PutNumber("Yaw2", pitch);
+    frc::SmartDashboard::PutNumber("Output2", m_output);
 
     //motor speed and rotation variables from controller for ArcadeDrive
     double speed = controller.GetLeftY(); 
@@ -197,13 +208,13 @@ class Robot : public frc::TimedRobot {
 
     //this logic is moving the arm into max arm position + automatic hold
     if(controllerOP.GetYButtonPressed()){
-      m_arm.Set(-0.4);
+      m_arm.Set(-armSpeed);
     }
 
     //This logic is moving the arm into lowest point of the arm + automatic hold
     if (controllerOP.GetAButtonPressed())
     {
-      m_arm.Set(0.4);
+      m_arm.Set(armSpeed * 0.6);
     }
     // Set up a boolean variable to keep track of whether the motor has reached the setpoint
     bool atSetpoint = false;
@@ -265,6 +276,11 @@ class Robot : public frc::TimedRobot {
   }
   //*************************************************AUTONOMUS CODE*************************************************************
   void AutonomousInit() override {
+    //check if those are working
+    m_leftMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_rightMotor1.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_rightMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_leftMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     m_autoControlPID.Reset();
     m_navx.Reset();
     m_timer.Reset();
@@ -274,14 +290,13 @@ class Robot : public frc::TimedRobot {
   void AutonomousPeriodic() override {
     //All autos must be 15 seconds even when real auto is 8
 
-
-    // Get the yaw angle from the navX-MXP sensor
-    double yaw = m_navx.GetYaw();
+     // Get the yaw angle from the navX-MXP sensor
+    m_navx.Reset();
+    double yaw = m_navx.GetPitch();
     //set to default
     m_autoControlPID.SetSetpoint(0);
     frc::SmartDashboard::PutNumber("Yaw", yaw);
     frc::SmartDashboard::PutNumber("Output", m_output);
-
 
     //initial values for the auto
     int x = frc::SmartDashboard::GetNumber("Delay (Sec)", 0);
@@ -321,31 +336,26 @@ class Robot : public frc::TimedRobot {
     if(m_timer.Get() < 0_s){
       m_robotDrive.TankDrive(-0.6,-0.6, false);
     }
-    else if(m_timer.Get() < 1.8_s){
+    else if(m_timer.Get() < 2_s){
       m_robotDrive.TankDrive(-0.6,-0.6, false);
     }
-    else if(m_timer.Get() < 2_s){
-      m_robotDrive.TankDrive(0.8,0.8, false);
+    else if(m_timer.Get() < 2.9_s){
+      m_robotDrive.TankDrive(0, 0, false);
     }
     else if(m_timer.Get() < 15_s){
-      //Auto Balance Logic
-      if (yaw < -kToleranceDegrees) {
-        m_robotDrive.ArcadeDrive(0.3, 0.0); // move forward
-      } else if (yaw > kToleranceDegrees) {
-          m_robotDrive.ArcadeDrive(-0.3, 0.0); // move backward
-      } else {
-        m_robotDrive.ArcadeDrive(0.0, 0.0); // stop robot
+      if (yaw < -1.5) {
+        m_robotDrive.TankDrive(0.3,0.3, false);
+      } else if (yaw > 6) {
+         m_robotDrive.TankDrive(-0.3,-0.3, false);
+      } else if (yaw >= 6){
+       m_robotDrive.TankDrive(0, 0, false);
+      }
+      else{
+        m_robotDrive.TankDrive(0, 0, false);
       }
     }
-    else{
-      //Auto Balance Logic
-      if (yaw < -kToleranceDegrees) {
-        m_robotDrive.ArcadeDrive(0.3, 0.0); // move forward
-      } else if (yaw > kToleranceDegrees) {
-          m_robotDrive.ArcadeDrive(-0.3, 0.0); // move backward
-      } else {
-        m_robotDrive.ArcadeDrive(0.0, 0.0); // stop robot
-      }
+    else if (yaw == 1){
+      m_robotDrive.TankDrive(0,0, false);
     }
   }
   else if(selectedOption == "NONE"){
@@ -434,29 +444,21 @@ class Robot : public frc::TimedRobot {
       m_arm.Set(0.4);
       m_intake.Set(0); //cone should go out
     }
-    else if(m_timer.Get() < 5.5_s + secondsX){
-      m_robotDrive.TankDrive(0.7, 0.7); //should go backwards
-    }
     else if(m_timer.Get() < 7_s + secondsX){
-      m_robotDrive.TankDrive(0,0,false);
+      m_robotDrive.TankDrive(0.45, 0.45, false); //should go backwards
     }
-    else if(m_timer.Get() < 7.9_s + secondsX){
-      m_robotDrive.TankDrive(-0.5,0.5,false);
-    }
-    else if(m_timer.Get() < 9_s + secondsX){
-      m_robotDrive.TankDrive(-0.7, -0.7);
-    }
-    else if(m_timer.Get() < 9.8_s + secondsX){
-      m_robotDrive.TankDrive(0.5,-0.5,false);
-    }
-    else if(m_timer.Get() < 14_s + secondsX){
-      m_robotDrive.TankDrive(-0.6,-0.6,false);
-    }
-    else if(m_timer.Get() < 15_s + secondsX){
-      m_robotDrive.TankDrive(0, 0);
+    else if (m_timer.Get() < 15_s + secondsX){
+       //Auto Balance Logic
+      if (yaw < -kToleranceDegrees) {
+        m_robotDrive.TankDrive(-0.3, -0.3, false); 
+      } else if (yaw > kToleranceDegrees) {
+          m_robotDrive.TankDrive(0.35, 0.35, false);
+      } else {
+        m_robotDrive.TankDrive(0, 0, false); 
+      }
     }
     else{
-      m_robotDrive.TankDrive(0, 0);
+      m_robotDrive.TankDrive(0, 0, false); 
     }
   }
   else if(selectedOption == "IntakeGO"){
@@ -503,7 +505,7 @@ class Robot : public frc::TimedRobot {
       m_arm.Set(0.4);
       m_intake.Set(0); //cone should go out
     }
-    else if(m_timer.Get() < 7_s + secondsX){
+    else if(m_timer.Get() < 6_s + secondsX){
       m_robotDrive.TankDrive(0.7, 0.7); //should go backwards
     }
     else if(m_timer.Get() < 15_s + secondsX){

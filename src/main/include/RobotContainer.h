@@ -44,6 +44,9 @@
 #include "rev/SparkMaxPIDController.h"
 #include <frc/DigitalInput.h>
 #include <frc/RobotBase.h>
+#include <math.h>
+#include <cmath>
+#include <algorithm>
 
 
 #include <frc2/command/Command.h>
