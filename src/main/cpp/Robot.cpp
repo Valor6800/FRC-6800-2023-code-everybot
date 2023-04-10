@@ -44,6 +44,11 @@ class Robot : public frc::TimedRobot {
 
     //NavX
     AHRS m_navx{frc::SPI::Port::kMXP};
+
+    void setArmMotorVoltageLimit(double voltageLimit){
+    voltageLimit = fmax(0.0, fmin(voltageLimit, 12.0));
+    m_arm.EnableVoltageCompensation(voltageLimit);
+    }
     
     
  public:
@@ -72,6 +77,10 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.RestoreFactoryDefaults();
     m_rightMotor1.RestoreFactoryDefaults();
     m_rightMotor2.RestoreFactoryDefaults();
+    m_arm.RestoreFactoryDefaults();
+
+    m_arm.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    setArmMotorVoltageLimit(11.5); //may change later from 11.5 to something else
     
     //list of Auto Options
     m_chooser.SetDefaultOption("NONE", kAutoOptions[0]);
@@ -84,6 +93,8 @@ class Robot : public frc::TimedRobot {
     m_chooser.AddOption("IntakeGO", kAutoOptions[7]);
     m_chooser.AddOption("IntakeGOHARD", kAutoOptions[8]);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+
+    frc::SmartDashboard::PutNumber("Arm Voltage", 0);
 
     //intake + arm speed
     frc::SmartDashboard::PutNumber("Intake Speed", 1);
@@ -206,6 +217,8 @@ class Robot : public frc::TimedRobot {
 
     //-------------------------------------ARM CONTROLLER CODE--------------------------------------------
 
+
+    m_arm.SetSmartCurrentLimit(12);
     //this logic is moving the arm into max arm position + automatic hold
     if(controllerOP.GetYButtonPressed()){
       m_arm.Set(-armSpeed);
@@ -214,7 +227,7 @@ class Robot : public frc::TimedRobot {
     //This logic is moving the arm into lowest point of the arm + automatic hold
     if (controllerOP.GetAButtonPressed())
     {
-      m_arm.Set(armSpeed * 0.6);
+      m_arm.Set(armSpeed * 0.5);
     }
     // Set up a boolean variable to keep track of whether the motor has reached the setpoint
     bool atSetpoint = false;
@@ -240,6 +253,10 @@ class Robot : public frc::TimedRobot {
         atSetpoint = true;
       }
     }
+    double Arm_volt = m_arm.GetBusVoltage();
+    frc::SmartDashboard::PutNumber("Arm Voltage", Arm_volt);
+    //frc::SendableChooser<>* chooser = new frc::SendableChooser<>();
+    //frc::SmartDashboard::PutData("Motor Voltage Graph", chooser);
 
     
 
@@ -292,6 +309,7 @@ class Robot : public frc::TimedRobot {
 
      // Get the yaw angle from the navX-MXP sensor
     m_navx.Reset();
+    m_navx.ZeroYaw();
     double yaw = m_navx.GetPitch();
     //set to default
     m_autoControlPID.SetSetpoint(0);
@@ -345,10 +363,8 @@ class Robot : public frc::TimedRobot {
     else if(m_timer.Get() < 15_s){
       if (yaw < -1.5) {
         m_robotDrive.TankDrive(0.3,0.3, false);
-      } else if (yaw > 6) {
-         m_robotDrive.TankDrive(-0.3,-0.3, false);
-      } else if (yaw >= 6){
-       m_robotDrive.TankDrive(0, 0, false);
+      } else if (yaw > 4) {
+         m_robotDrive.TankDrive(0,0, false);
       }
       else{
         m_robotDrive.TankDrive(0, 0, false);
