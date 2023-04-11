@@ -98,7 +98,7 @@ class Robot : public frc::TimedRobot {
 
     //intake + arm speed
     frc::SmartDashboard::PutNumber("Intake Speed", 1);
-    frc::SmartDashboard::PutNumber("Arm Speed", 0.3);
+    frc::SmartDashboard::PutNumber("Arm Speed", 0.9);
 
     //used to count NEO motor rotations to fully open an arm
     frc::SmartDashboard::PutNumber("Arm Rotation", 0);
@@ -131,7 +131,7 @@ class Robot : public frc::TimedRobot {
   }
 
   void TeleopPeriodic() override {
-
+    m_navx.Calibrate();
     //limtations on speed and rotation
     double m_rot = frc::SmartDashboard::GetNumber("Rotation Sesitivity", 0.75);
     double Totsens = frc::SmartDashboard::GetNumber("Speed Sesitivity", 0.85);
@@ -142,7 +142,7 @@ class Robot : public frc::TimedRobot {
 
     //initial speed of the intake will be 80% + arm 100%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 1);
-    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.3);
+    double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.9);
 
 
 
@@ -151,7 +151,7 @@ class Robot : public frc::TimedRobot {
 
     
     // Get the yaw angle from the navX-MXP sensor
-    double pitch = m_navx.GetPitch();
+    double pitch = m_navx.GetRoll();
     //double verticalAngle = Math.toDegrees(Math.atan2(pitch - yaw, 1));
     //set to default
     m_autoControlPID.SetSetpoint(0);
@@ -300,6 +300,7 @@ class Robot : public frc::TimedRobot {
     m_leftMotor2.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     m_autoControlPID.Reset();
     m_navx.Reset();
+    m_navx.ZeroYaw();
     m_timer.Reset();
     m_timer.Start();
   }
@@ -309,8 +310,9 @@ class Robot : public frc::TimedRobot {
 
      // Get the yaw angle from the navX-MXP sensor
     m_navx.Reset();
+    m_navx.Calibrate();
     m_navx.ZeroYaw();
-    double yaw = m_navx.GetPitch();
+    double yaw = m_navx.GetRoll();
     //set to default
     m_autoControlPID.SetSetpoint(0);
     frc::SmartDashboard::PutNumber("Yaw", yaw);
@@ -350,28 +352,39 @@ class Robot : public frc::TimedRobot {
   }
 
   else if (selectedOption == "TEST"){
-    //change
-    if(m_timer.Get() < 0_s){
-      m_robotDrive.TankDrive(-0.6,-0.6, false);
-    }
-    else if(m_timer.Get() < 2_s){
-      m_robotDrive.TankDrive(-0.6,-0.6, false);
-    }
-    else if(m_timer.Get() < 2.9_s){
+     coneInt = true;
+    //ROBOT MUST FACE THE DRIVER
+    if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
       m_robotDrive.TankDrive(0, 0, false);
     }
+    else if(m_timer.Get() < 2_s + secondsX){
+      m_robotDrive.TankDrive(0, 0, false);
+      m_arm.Set(-0.3);
+    }
+    else if(m_timer.Get() < 3_s + secondsX){
+      m_intake.Set(intakeSpeed); //change to - when cube
+    }
+    else if(m_timer.Get() < 4_s + secondsX){
+      m_arm.Set(0.3);
+      m_intake.Set(0); //cone should go out
+      // m_autoControlPID.Reset();
+      // m_navx.Reset();
+      // m_navx.Calibrate();
+      // m_navx.ZeroYaw();
+    }
+    else if(m_timer.Get() < 7_s + secondsX){
+      m_robotDrive.TankDrive(0.4, 0.4, false); //should go backwards
+      m_arm.Set(0.3);
+    }
     else if(m_timer.Get() < 15_s){
-      if (yaw < -1.5) {
+      if (yaw < -7.6) {
         m_robotDrive.TankDrive(0.3,0.3, false);
-      } else if (yaw > 4) {
+      } else if (yaw > -7.6) {
          m_robotDrive.TankDrive(0,0, false);
       }
       else{
-        m_robotDrive.TankDrive(0, 0, false);
+        m_robotDrive.TankDrive(0,0, false);
       }
-    }
-    else if (yaw == 1){
-      m_robotDrive.TankDrive(0,0, false);
     }
   }
   else if(selectedOption == "NONE"){
