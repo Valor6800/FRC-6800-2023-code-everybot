@@ -44,7 +44,6 @@ class Robot : public frc::TimedRobot {
 
     //NavX
     AHRS m_navx{frc::SPI::Port::kMXP};
-
     void setArmMotorVoltageLimit(double voltageLimit){
     voltageLimit = fmax(0.0, fmin(voltageLimit, 12.0));
     m_arm.EnableVoltageCompensation(voltageLimit);
@@ -68,6 +67,9 @@ class Robot : public frc::TimedRobot {
 
     // Set the controller to be continuous (because it is an angle controller)
     m_navx.Calibrate();
+        //maybe need another function
+    double m_angle = m_navx.GetAngle();
+    frc::SmartDashboard::PutNumber("Hor Angle", m_angle);
 
     //right motor must be inverted for it to go forward
     m_rightMotors.SetInverted(true);    
@@ -143,7 +145,6 @@ class Robot : public frc::TimedRobot {
     //initial speed of the intake will be 80% + arm 100%
     double intakeSpeed = frc::SmartDashboard::GetNumber("Intake Speed", 1);
     double armSpeed = frc::SmartDashboard::GetNumber("Arm Speed", 0.9);
-
 
 
     //--------------------------------------DRIVE CODE HERE:--------------------------------------------
@@ -254,11 +255,7 @@ class Robot : public frc::TimedRobot {
       }
     }
     double Arm_volt = m_arm.GetBusVoltage();
-    frc::SmartDashboard::PutNumber("Arm Voltage", Arm_volt);
-    //frc::SendableChooser<>* chooser = new frc::SendableChooser<>();
-    //frc::SmartDashboard::PutData("Motor Voltage Graph", chooser);
-
-    
+    frc::SmartDashboard::PutNumber("Arm Voltage", Arm_volt);    
 
     //right and left bumpers will be the manual control of the arm
     if(controllerOP.GetRightBumper() != 0){
@@ -307,16 +304,13 @@ class Robot : public frc::TimedRobot {
 
   void AutonomousPeriodic() override {
     //All autos must be 15 seconds even when real auto is 8
-
-     // Get the yaw angle from the navX-MXP sensor
-    m_navx.Reset();
-    m_navx.Calibrate();
-    m_navx.ZeroYaw();
     double yaw = m_navx.GetRoll();
+
     //set to default
     m_autoControlPID.SetSetpoint(0);
     frc::SmartDashboard::PutNumber("Yaw", yaw);
     frc::SmartDashboard::PutNumber("Output", m_output);
+    double recangle = frc::SmartDashboard::GetNumber("Hor Angle", 0);
 
     //initial values for the auto
     int x = frc::SmartDashboard::GetNumber("Delay (Sec)", 0);
@@ -351,7 +345,7 @@ class Robot : public frc::TimedRobot {
     }
   }
 
-  else if (selectedOption == "TEST"){
+  else if (selectedOption == "TEST"){ //use with 12.5 voltage
      coneInt = true;
     //ROBOT MUST FACE THE DRIVER
     if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
@@ -362,29 +356,29 @@ class Robot : public frc::TimedRobot {
       m_arm.Set(-0.3);
     }
     else if(m_timer.Get() < 3_s + secondsX){
-      m_intake.Set(intakeSpeed); //change to - when cube
+      m_intake.Set(-intakeSpeed); //change to - when cube
     }
     else if(m_timer.Get() < 4_s + secondsX){
       m_arm.Set(0.3);
       m_intake.Set(0); //cone should go out
-      // m_autoControlPID.Reset();
-      // m_navx.Reset();
-      // m_navx.Calibrate();
-      // m_navx.ZeroYaw();
     }
-    else if(m_timer.Get() < 7_s + secondsX){
-      m_robotDrive.TankDrive(0.4, 0.4, false); //should go backwards
+    else if(m_timer.Get() < 4.5_s + secondsX){
+      m_robotDrive.TankDrive(0, 0, false);
+    }
+    else if(m_timer.Get() < 6.5_s + secondsX){
+      m_robotDrive.TankDrive(0.5, 0.5, false); //should go backwards
       m_arm.Set(0.3);
     }
-    else if(m_timer.Get() < 15_s){
-      if (yaw < -7.6) {
-        m_robotDrive.TankDrive(0.3,0.3, false);
-      } else if (yaw > -7.6) {
-         m_robotDrive.TankDrive(0,0, false);
-      }
-      else{
-        m_robotDrive.TankDrive(0,0, false);
-      }
+     else if(m_timer.Get() < 9_s + secondsX){
+       if(recangle > -70){
+       m_robotDrive.TankDrive(-0.45, 0.45, false);
+       }
+       else{
+         m_robotDrive.TankDrive(0, 0, false);
+       }
+     }
+    else if(m_timer.Get() < 15_s + secondsX){ 
+      m_robotDrive.TankDrive(0, 0, false);
     }
   }
   else if(selectedOption == "NONE"){
@@ -398,7 +392,7 @@ class Robot : public frc::TimedRobot {
       m_robotDrive.TankDrive(0,0);
     }
   }
-  else if(selectedOption == "R_Left_BR"){
+  else if(selectedOption == "R_Left"){
     //ROBOT MUST FACE THE DRIVER
     if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
       m_robotDrive.ArcadeDrive(0.0, 0.0, false);
@@ -413,7 +407,7 @@ class Robot : public frc::TimedRobot {
       m_robotDrive.TankDrive(0, 0, false); 
     }
     else if(m_timer.Get() < 2_s + secondsX){
-      m_robotDrive.TankDrive(0.65, -0.65, false); 
+      m_robotDrive.TankDrive(-0.65, 0.65, false); 
     }
     else if(m_timer.Get() < 2.6_s + secondsX){ //0.3sec to turn 90 degrees with speed 0.62
       m_robotDrive.TankDrive(-0.6, -0.6, false); 
@@ -422,16 +416,20 @@ class Robot : public frc::TimedRobot {
       m_robotDrive.TankDrive(0, 0, false); 
     }
     else if(m_timer.Get() < 3.4_s + secondsX){
-      m_robotDrive.TankDrive(-0.57, 0.57, false); 
+      m_robotDrive.TankDrive(0.57, -0.57, false); 
     }
-    else if(m_timer.Get() < 4.65_s + secondsX){
-      m_robotDrive.TankDrive(-0.8, -0.8, false); 
+    else if(m_timer.Get() < 5_s + secondsX){
+      m_robotDrive.TankDrive(-0.4, -0.4, false); //should go backwards
     }
-    else if(m_timer.Get() < 4.7_s + secondsX){
-      m_robotDrive.TankDrive(0.8, 0.8, false); 
-    }
-    else if(m_timer.Get() < 6_s + secondsX){
-      m_robotDrive.TankDrive(0, 0, false); 
+    else if(m_timer.Get() < 15_s){
+      if (yaw < -7.6) {
+        m_robotDrive.TankDrive(-0.3,-0.3, false);
+      } else if (yaw > -7.6) {
+         m_robotDrive.TankDrive(0,0, false);
+      }
+      else{
+        m_robotDrive.TankDrive(0,0, false);
+      }
     }
     else{
       m_robotDrive.TankDrive(0, 0, false);
@@ -439,20 +437,35 @@ class Robot : public frc::TimedRobot {
   }
 
   else if(selectedOption == "IntakeBR"){
-    if(m_timer.Get() < secondsX){
-      m_robotDrive.ArcadeDrive(0.0, 0.0, false);
-    }
-    else if(m_timer.Get() < 0.15_s + secondsX){
-      m_robotDrive.TankDrive(-0.6, -0.6, false); 
-    }
-    else if(m_timer.Get() < 1.5_s + secondsX){
-      m_robotDrive.TankDrive(0.9, 0.9, false); 
-    }
-    else if(m_timer.Get() < 1.7_s + secondsX){
-      m_robotDrive.TankDrive(0, 0, false); 
-    }
-    else{
+    coneInt = true;
+    //ROBOT MUST FACE THE DRIVER
+    if(m_timer.Get() < secondsX){ // PERFECT VOLTAGE - 12.3 - 12.5
       m_robotDrive.TankDrive(0, 0, false);
+    }
+    else if(m_timer.Get() < 2_s + secondsX){
+      m_robotDrive.TankDrive(0, 0, false);
+      m_arm.Set(-0.3);
+    }
+    else if(m_timer.Get() < 3_s + secondsX){
+      m_intake.Set(-intakeSpeed); //change to - when cube
+    }
+    else if(m_timer.Get() < 4_s + secondsX){
+      m_arm.Set(0.3);
+      m_intake.Set(0); //cone should go out
+    }
+    else if(m_timer.Get() < 7_s + secondsX){
+      m_robotDrive.TankDrive(0.4, 0.4, false); //should go backwards
+      m_arm.Set(0.3);
+    }
+    else if(m_timer.Get() < 15_s){
+      if (yaw < -7.6) {
+        m_robotDrive.TankDrive(0.3,0.3, false);
+      } else if (yaw > -7.6) {
+         m_robotDrive.TankDrive(0,0, false);
+      }
+      else{
+        m_robotDrive.TankDrive(0,0, false);
+      }
     }
   }
 

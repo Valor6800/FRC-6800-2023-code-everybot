@@ -1,17 +1,17 @@
 See file:///C:/Users/skyla/Desktop/copy/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
 C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp: In member function 'virtual void Robot::TeleopPeriodic()':
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:140:12: warning: unused variable 'sensLeft' [-Wunused-variable]
-  140 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:142:12: warning: unused variable 'sensLeft' [-Wunused-variable]
+  142 |     double sensLeft = frc::SmartDashboard::GetNumber("Left Motor Limit", 1); //65%? 0.65
       |            ^~~~~~~~
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:141:12: warning: unused variable 'sensRight' [-Wunused-variable]
-  141 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:143:12: warning: unused variable 'sensRight' [-Wunused-variable]
+  143 |     double sensRight = frc::SmartDashboard::GetNumber("Right Motor Limit", 1);
       |            ^~~~~~~~~
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:165:12: warning: unused variable 'SQRTspeed' [-Wunused-variable]
-  165 |     double SQRTspeed = sqrt(speed);
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:166:12: warning: unused variable 'SQRTspeed' [-Wunused-variable]
+  166 |     double SQRTspeed = sqrt(speed);
       |            ^~~~~~~~~
-C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:166:12: warning: unused variable 'SQRTrotation' [-Wunused-variable]
-  166 |     double SQRTrotation = sqrt(rotation);
+C:\Users\skyla\Desktop\copy\FRC-6800-2023-code-everybot\src\main\cpp\Robot.cpp:167:12: warning: unused variable 'SQRTrotation' [-Wunused-variable]
+  167 |     double SQRTrotation = sqrt(rotation);
       |            ^~~~~~~~~~~~
 
 Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/skyla/Desktop/copy/FRC-6800-2023-code-everybot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.
