@@ -17,7 +17,7 @@ class Robot : public frc::TimedRobot {
     rev::CANSparkMax m_leftMotor1{12, rev::CANSparkMax::MotorType::kBrushed}; //12
     rev::CANSparkMax m_leftMotor2{5, rev::CANSparkMax::MotorType::kBrushed}; //5
     rev::CANSparkMax m_rightMotor1{4, rev::CANSparkMax::MotorType::kBrushed}; //4
-    rev::CANSparkMax m_rightMotor2{4, rev::CANSparkMax::MotorType::kBrushed}; //1
+    rev::CANSparkMax m_rightMotor2{1, rev::CANSparkMax::MotorType::kBrushed}; //1
     //Intake + arm controllers
     rev::CANSparkMax m_intake{3, rev::CANSparkMax::MotorType::kBrushless}; //3
     rev::CANSparkMax m_arm{8, rev::CANSparkMax::MotorType::kBrushless}; //8
