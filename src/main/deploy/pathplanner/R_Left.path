@@ -1,0 +1,61 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 2.0227118034307257,
+        "y": 4.716563454479223
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.0227118034307248,
+        "y": 4.716563454479223
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Intake_Score"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 4.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.026085219430227,
+        "y": 4.72
+      },
+      "prevControl": {
+        "x": 5.026085219430227,
+        "y": 4.72
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "maxVelocity": 4.0,
+  "maxAcceleration": 2.0,
+  "isReversed": true,
+  "markers": [
+    {
+      "position": 0.07272727272720995,
+      "names": [
+        "Intake In"
+      ]
+    }
+  ]
+}

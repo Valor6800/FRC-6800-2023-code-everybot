@@ -1,7 +1,8 @@
 -o
-C:\\Users\\skyla\\Desktop\\copy\\FRC-6800-2023-code-everybot\\build\\exe\\frcUserProgram\\debug\\frcUserProgram
-C:\\Users\\skyla\\Desktop\\copy\\FRC-6800-2023-code-everybot\\build\\objs\\frcUserProgram\\debug\\frcUserProgramCpp\\3bg5a77l7vd4edmrxq5jco6ri\\Robot.o
+C:\\Users\\skyla\\Desktop\\GitHubCode\\FRC-6800-2023-code-everybot\\build\\exe\\frcUserProgram\\debug\\frcUserProgram
+C:\\Users\\skyla\\Desktop\\GitHubCode\\FRC-6800-2023-code-everybot\\build\\objs\\frcUserProgram\\debug\\frcUserProgramCpp\\3bg5a77l7vd4edmrxq5jco6ri\\Robot.o
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\8bd00b8241ecce58a7cf41ab0ec087be\\transformed\\wpilibNewCommands-cpp-2023.4.3-linuxathenadebug\\linux\\athena\\shared\\libwpilibNewCommandsd.so
+C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\711a9356cefd54f02495b881f0bac046\\transformed\\PathplannerLib-cpp-2023.4.4-linuxathenastaticdebug\\linux\\athena\\static\\libPathplannerLib.a
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\86a8ef6db49e5f98b50aead3aa51793e\\transformed\\REVLib-cpp-2023.1.2-linuxathenastaticdebug\\linux\\athena\\static\\libREVLib.a
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\4ed61710f1ba2e500b5e655de9b785a8\\transformed\\REVLib-driver-2023.1.2-linuxathenastaticdebug\\linux\\athena\\static\\libREVLibDriver.a
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\4e15de1529d33c7457fe0a101095e2dd\\transformed\\navx-frc-cpp-2023.0.3-linuxathenastaticdebug\\linux\\athena\\static\\libNavX.a

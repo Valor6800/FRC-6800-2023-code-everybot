@@ -1,4 +1,5 @@
 #pragma once
+
 #include "frc/XboxController.h"
 #include <frc/TimedRobot.h>
 #include <frc/RobotState.h>
@@ -15,9 +16,14 @@
 #include <networktables/NetworkTableInstance.h>
 #include <iostream>
 #include <rev/CANEncoder.h>
+#include <pathplanner/lib/PathPlanner.h>
 #include <rev/SparkMaxRelativeEncoder.h>
 #include <rev/RelativeEncoder.h>
 #include <rev/CANDigitalInput.h>
+#include <pathplanner/lib/auto/SwerveAutoBuilder.h>
+#include <pathplanner/lib/PathPoint.h>
+#include <pathplanner/lib/PathPlannerTrajectory.h>
+#include <pathplanner/lib/commands/FollowPathWithEvents.h>
 #include <rev/AbsoluteEncoder.h>
 #include <rev/CANPIDController.h>
 #include <frc/SPI.h>
@@ -44,9 +50,6 @@
 #include "rev/SparkMaxPIDController.h"
 #include <frc/DigitalInput.h>
 #include <frc/RobotBase.h>
-#include <math.h>
-#include <cmath>
-#include <algorithm>
 
 
 #include <frc2/command/Command.h>
@@ -55,3 +58,4 @@
 #include <wpi/DataLog.h>
 
 using namespace rev;
+using namespace pathplanner;

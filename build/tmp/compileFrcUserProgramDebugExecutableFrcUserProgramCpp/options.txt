@@ -16,9 +16,11 @@ c++
 -g
 -nostdinc
 -I
-C:\\Users\\skyla\\Desktop\\copy\\FRC-6800-2023-code-everybot\\src\\main\\include
+C:\\Users\\skyla\\Desktop\\GitHubCode\\FRC-6800-2023-code-everybot\\src\\main\\include
 -I
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\9c6bb2103a3d82450f87644c2c782003\\transformed\\wpilibNewCommands-cpp-2023.4.3-headers
+-I
+C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\6a29b6a0129875ef538f0a4cf271b799\\transformed\\PathplannerLib-cpp-2023.4.4-headers
 -I
 C:\\Users\\skyla\\.gradle\\caches\\transforms-3\\9ba30e188f922cf65bd360ffebe83ea5\\transformed\\REVLib-cpp-2023.1.2-headers
 -I
